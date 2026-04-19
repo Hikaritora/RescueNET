@@ -30,7 +30,7 @@ CREATE TABLE Operacja (
 CREATE TABLE Zasob (
     id_zasobu SERIAL PRIMARY KEY,
     nazwa VARCHAR(100) NOT NULL,
-    typ VARCHAR(50) NOT NULL, -- np. karetka, straż 
+    typ VARCHAR(50) NOT NULL,  
     specjalizacja VARCHAR(100),
     status VARCHAR(20) NOT NULL,
     dostepnosc BOOLEAN NOT NULL DEFAULT TRUE 
