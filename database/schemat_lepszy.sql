@@ -33,9 +33,9 @@ CREATE TABLE Zasob (
     typ VARCHAR(50) NOT NULL,  
     specjalizacja VARCHAR(100),
     status VARCHAR(20) NOT NULL,
-    dostepnosc BOOLEAN NOT NULL DEFAULT TRUE
+    dostepnosc BOOLEAN NOT NULL DEFAULT TRUE,
     lat DECIMAL(9,6) NOT NULL, 
-    lng DECIMAL(9,6) NOT NULL, 
+    lng DECIMAL(9,6) NOT NULL 
 );
 
 
