@@ -78,7 +78,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'rescuenet',      # Nazwa bazy, którą stworzyłeś w pgAdmin
         'USER': 'postgres',       # Twoja nazwa użytkownika
-        'PASSWORD': 'Szakal003',
+        'PASSWORD': 'haslo',
         'HOST': 'localhost',
         'PORT': '5432',
     }
