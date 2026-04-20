@@ -5,11 +5,11 @@ INSERT INTO uzytkownik (imie, nazwisko, rola, login, haslo) VALUES
 ('Sarah', 'Rescuer', 'ratownik', 'rescuer', 'rescue123');           
 
 
-INSERT INTO zasob (nazwa, typ, specjalizacja, status, dostepnosc) VALUES 
-('Dr. Emily Chen', 'Medical', 'Emergency Medicine', 'Available', TRUE), 
-('Fire Unit Alpha', 'Unit', 'Fire Response', 'Available', TRUE),        
-('Ambulance A-12', 'Equipment', 'Life Support', 'Available', TRUE),    
-('Fire Truck F-5', 'Equipment', 'Water Pump', 'Available', TRUE);       
+INSERT INTO zasob (nazwa, typ, specjalizacja, status, dostepnosc,lat,lng) VALUES 
+('Dr. Emily Chen', 'Medical', 'Emergency Medicine', 'Available', TRUE,51.02,17.02), 
+('Fire Unit Alpha', 'Unit', 'Fire Response', 'Available', TRUE, 52.07,18.2),        
+('Ambulance A-12', 'Equipment', 'Life Support', 'Available', TRUE, 50.02, 18.1),    
+('Fire Truck F-5', 'Equipment', 'Water Pump', 'Available', TRUE, 50.5, 17.7);       
 
 
 INSERT INTO incydent (typ, lat, lng, priorytet, status, id_uzytkownika) VALUES 
