@@ -1,0 +1,155 @@
+{% extends 'management/base.html' %}
+
+{% block content %}
+<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+    <div>
+        <h2 style="margin: 0;">Incident Details: INC-00{{ incydent.id }}</h2>
+        <p style="color: #666; margin: 5px 0 0 0;">Reported by: {{ incydent.uzytkownik.username }}</p>
+    </div>
+    
+    {% if incydent.status != 'zakończony' %}
+    <form action="{% url 'zakoncz_incydent' incydent.id %}" method="post">
+        {% csrf_token %}
+        <button type="submit" style="background: #000; color: #fff; border: none; padding: 10px 20px; border-radius: 8px; font-weight: bold; cursor: pointer;">
+            Finish Incident & Release Units
+        </button>
+    </form>
+    {% else %}
+    <div style="background: #e8f5e9; color: #2e7d32; padding: 10px 20px; border-radius: 8px; font-weight: bold;">
+        ✓ THIS CASE IS CLOSED
+    </div>
+    {% endif %}
+</div>
+
+<div style="display: grid; grid-template-columns: 2fr 1fr; gap: 25px;">
+    
+    <div style="background: #fff; border-radius: 15px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); overflow: hidden; min-height: 500px;">
+        <div id="map" style="width: 100%; height: 100%; min-height: 500px;"></div>
+    </div>
+
+    <div style="display: flex; flex-direction: column; gap: 25px;">
+        <div style="background: #fff; padding: 25px; border-radius: 15px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); min-height: 400px;">
+            <h3 style="margin-top: 0; display: flex; justify-content: space-between; align-items: center;">
+                Deployed Units
+                <span style="background: #f4f7f6; padding: 2px 10px; border-radius: 10px; font-size: 12px;">{{ zasoby.count }}</span>
+            </h3>
+            <hr style="border: 0; border-top: 1px solid #f4f7f6; margin: 15px 0;">
+
+            <div style="display: flex; flex-direction: column; gap: 12px;">
+                {% for zasob in zasoby %}
+                <div style="padding: 15px; border: 1px solid #eee; border-radius: 10px; border-left: 5px solid #d32f2f; background: #fafafa;">
+                    <strong style="display: block; color: #333;">{{ zasob.nazwa }}</strong>
+                    <small style="color: #666; text-transform: uppercase;">{{ zasob.typ }}</small>
+                </div>
+                {% empty %}
+                <div style="text-align: center; padding: 40px 20px; color: #bbb;">
+                    <p style="font-size: 40px; margin: 0;">🚑</p>
+                    <p style="font-style: italic;">No units assigned to this incident yet.</p>
+                    {% if incydent.status != 'zakończony' %}
+                    <small>Drag blue markers on the map to assign units.</small>
+                    {% endif %}
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<div style="background: #fff; margin-top: 25px; padding: 25px; border-radius: 15px; box-shadow: 0 2px 8px rgba(0,0,0,0.05);">
+    <h3 style="margin-top: 0;">Case Information</h3>
+    <hr style="border: 0; border-top: 1px solid #f4f7f6; margin: 15px 0;">
+    <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px;">
+        <div>
+            <label style="font-size: 11px; color: #aaa; text-transform: uppercase; font-weight: bold;">Incident Type</label>
+            <p style="margin: 5px 0; font-size: 18px;">{{ incydent.typ }}</p>
+        </div>
+        <div>
+            <label style="font-size: 11px; color: #aaa; text-transform: uppercase; font-weight: bold;">Current Status</label>
+            <p style="margin: 5px 0; font-size: 18px; color: #d32f2f; font-weight: bold;">{{ incydent.status|upper }}</p>
+        </div>
+        <div>
+            <label style="font-size: 11px; color: #aaa; text-transform: uppercase; font-weight: bold;">Latitude</label>
+            <p style="margin: 5px 0; font-family: monospace;">{{ incydent.lat }}</p>
+        </div>
+        <div>
+            <label style="font-size: 11px; color: #aaa; text-transform: uppercase; font-weight: bold;">Longitude</label>
+            <p style="margin: 5px 0; font-family: monospace;">{{ incydent.lng }}</p>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // 1. Bezpieczne pobieranie współrzędnych incydentu
+        var rawLat = "{{ incydent.lat|default:'0' }}".replace(',', '.');
+        var rawLng = "{{ incydent.lng|default:'0' }}".replace(',', '.');
+        
+        var incLat = parseFloat(rawLat);
+        var incLng = parseFloat(rawLng);
+        
+        // 2. Ratunek dla błędnych danych (centrujemy na środek operacji, np. Wrocław)
+        if (isNaN(incLat) || incLat === 0) {
+            incLat = 51.1079;
+        }
+        if (isNaN(incLng) || incLng === 0) {
+            incLng = 17.0385;
+        }
+
+        // 3. Mapa centralnie w punkcie incydentu (bez rozpraszania się na karetki)
+        var map = L.map('map').setView([incLat, incLng], 14);
+
+        L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+            attribution: '© CARTO'
+        }).addTo(map);
+
+        // 4. Rysowanie czerwonej pineski incydentu
+        var incidentMarker = L.marker([incLat, incLng], {
+            zIndexOffset: 1000, // Zawsze na samej górze
+            icon: L.icon({
+                iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png',
+                shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
+                iconSize: [25, 41], iconAnchor: [12, 41]
+            })
+        }).addTo(map).bindPopup("<b>INCIDENT TARGET</b>");
+
+        // 5. Rysowanie wolnych zasobów
+        {% if incydent.status != 'zakończony' %}
+            {% for z in wolne_zasoby %}
+                { // Używamy let wewnątrz klamerek, żeby markery "nie zapominały" skąd są
+                    let zName = "{{ z.nazwa|escapejs }}";
+                    let zLat = parseFloat("{{ z.lat|default:'0' }}".replace(',', '.'));
+                    let zLng = parseFloat("{{ z.lng|default:'0' }}".replace(',', '.'));
+                    
+                    if (!isNaN(zLat) && zLat !== 0) {
+                        let zMarker = L.marker([zLat, zLng], {
+                            draggable: true,
+                            title: zName,
+                            origLat: zLat, // Zapisujemy adres powrotny w pinesce
+                            origLng: zLng
+                        }).addTo(map);
+
+                        zMarker.bindPopup("<b>" + zName + "</b><br>Drag me to assign!");
+
+                        zMarker.on('dragend', function(event) {
+                            let marker = event.target;
+                            let distance = marker.getLatLng().distanceTo(L.latLng(incLat, incLng));
+
+                            if (distance < 500) {
+                                if (confirm("Assign " + zName + " to this incident?")) {
+                                    window.location.href = "/zasoby/assign/{{ z.id }}/?incydent_id={{ incydent.id }}";
+                                } else {
+                                    marker.setLatLng([marker.options.origLat, marker.options.origLng]);
+                                }
+                            } else {
+                                marker.setLatLng([marker.options.origLat, marker.options.origLng]);
+                            }
+                        });
+                    }
+                }
+            {% endfor %}
+        {% endif %}
+
+        setTimeout(function() { map.invalidateSize(); }, 200);
+    });
+</script>
+{% endblock %}

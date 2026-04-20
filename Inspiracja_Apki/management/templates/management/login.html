@@ -1,0 +1,32 @@
+{% extends 'management/base.html' %}
+{% block content %}
+<div style="max-width: 400px; margin: 100px auto; background: #fff; padding: 40px; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); border-top: 5px solid #d32f2f;">
+    <h2 style="text-align: center; margin-bottom: 30px;">Login to RescueNet</h2>
+    
+    <form method="POST">
+    {% csrf_token %}
+
+    {% if form.errors %}
+        <p style="color: #d32f2f; background: #ffebee; padding: 10px; border-radius: 8px;">
+            Your username and password didn't match. Please try again.
+        </p>
+    {% endif %}
+    
+    </form>
+    
+    
+    
+    <form method="POST">
+        {% csrf_token %}
+        <div style="margin-bottom: 20px;">
+            <label style="display: block; margin-bottom: 8px;">Username</label>
+            <input type="text" name="username" style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px;">
+        </div>
+        <div style="margin-bottom: 30px;">
+            <label style="display: block; margin-bottom: 8px;">Password</label>
+            <input type="password" name="password" style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px;">
+        </div>
+        <button type="submit" style="width: 100%; background: #000; color: #fff; border: none; padding: 15px; border-radius: 8px; cursor: pointer; font-weight: bold;">Sign In</button>
+    </form>
+</div>
+{% endblock %}

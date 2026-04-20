@@ -1,0 +1,36 @@
+{% extends 'management/base.html' %}
+
+{% block content %}
+<h2>Resource Management</h2>
+<p>Status of emergency units, personnel, and equipment.</p>
+
+<div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px;">
+    {% for zasob in zasoby %}
+    <div style="background: #fff; padding: 20px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border-left: 5px solid {% if zasob.dostepnosc %}#388e3c{% else %}#d32f2f{% endif %};">
+        <div style="display: flex; justify-content: space-between; align-items: start;">
+            <div>
+                <h3 style="margin: 0; color: #333;">{{ zasob.nazwa }}</h3>
+                <span style="font-size: 12px; color: #666; text-transform: uppercase;">{{ zasob.typ }}</span>
+            </div>
+            <span style="padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: bold; background: {% if zasob.dostepnosc %}#e8f5e9; color: #2e7d32;{% else %}#ffebee; color: #c62828;{% endif %}">
+                {% if zasob.dostepnosc %}AVAILABLE{% else %}BUSY{% endif %}
+            </span>
+        </div>
+        
+        <div style="margin-top: 15px; font-size: 14px; color: #555;">
+            <strong>Specialization:</strong> {{ zasob.specjalizacja|default:"General" }}<br>
+            <strong>Current Status:</strong> {{ zasob.status }}
+        </div>
+
+        <div style="margin-top: 20px; display: flex; gap: 10px;">
+            <button style="flex: 1; padding: 8px; border: 1px solid #ddd; border-radius: 6px; background: #fff; cursor: pointer;">Details</button>
+            {% if user.rola == 'dyspozytor' or user.is_superuser %}
+            <a href="{% url 'przypisz_zasob' zasob.id %}" style="flex: 1; text-align: center; padding: 8px; border: none; border-radius: 6px; background: #000; color: #fff; cursor: pointer; text-decoration: none; font-size: 14px;">
+            Assign
+        </a>
+    {% endif %}
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}

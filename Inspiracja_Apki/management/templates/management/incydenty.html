@@ -1,0 +1,83 @@
+{% extends 'management/base.html' %}
+
+{% block content %}
+<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+    <div>
+        <h2>Incident Management</h2>
+        <p style="color: #666;">View and filter all reported emergency events.</p>
+    </div>
+    
+    <div style="background: #d32f2f; color: white; padding: 10px 25px; border-radius: 8px; text-align: center;">
+        <span style="font-size: 24px; font-weight: bold; display: block;">{{ incydenty.count }}</span>
+        <span style="font-size: 10px; text-transform: uppercase;">Total Cases</span>
+    </div>
+</div>
+
+<div style="background: #fff; padding: 15px; border-radius: 12px; margin-bottom: 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+    <form method="GET" style="display: flex; gap: 15px; align-items: center;">
+        <select name="status" onchange="this.form.submit()" style="padding: 10px; border-radius: 6px; border: 1px solid #ddd; min-width: 150px;">
+            <option value="">All Statuses</option>
+            <option value="zgłoszony" {% if selected_status == 'zgłoszony' %}selected{% endif %}>Zgłoszony</option>
+            <option value="w toku" {% if selected_status == 'w toku' %}selected{% endif %}>W toku</option>
+            <option value="zakończony" {% if selected_status == 'zakończony' %}selected{% endif %}>Zakończony</option>
+        </select>
+
+        <select name="priority" onchange="this.form.submit()" style="padding: 10px; border-radius: 6px; border: 1px solid #ddd; min-width: 150px;">
+            <option value="">All Priorities</option>
+            <option value="krytyczny" {% if selected_priority == 'krytyczny' %}selected{% endif %}>Krytyczny</option>
+            <option value="wysoki" {% if selected_priority == 'wysoki' %}selected{% endif %}>Wysoki</option>
+            <option value="średni" {% if selected_priority == 'średni' %}selected{% endif %}>Średni</option>
+            <option value="niski" {% if selected_priority == 'niski' %}selected{% endif %}>Niski</option>
+        </select>
+
+        <a href="{% url 'lista_incydentow' %}" style="color: #666; text-decoration: none; font-size: 14px;">Reset Filters</a>
+    </form>
+</div>
+
+<div style="background: #fff; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05);">
+    <table style="width: 100%; border-collapse: collapse;">
+        <thead>
+            <tr style="background: #f8f9fa; border-bottom: 2px solid #eee;">
+                <th style="padding: 15px; text-align: left;">Incident ID</th>
+                <th style="padding: 15px; text-align: left;">Type</th>
+                <th style="padding: 15px; text-align: left;">Location</th>
+                <th style="padding: 15px; text-align: left;">Priority</th>
+                <th style="padding: 15px; text-align: left;">Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for incydent in incydenty %}
+            <tr style="border-bottom: 1px solid #eee;">
+                <td style="padding: 15px;">
+                    <a href="{% url 'szczegoly_incydentu' incydent.id %}" style="color: #d32f2f; font-weight: bold; text-decoration: none;">
+                        INC-00{{ incydent.id }}
+                    </a>
+                </td>
+                <td style="padding: 15px;">{{ incydent.typ }}</td>
+                <td style="padding: 15px; font-family: monospace; color: #666;">
+                    {{ incydent.lat|floatformat:4 }}, {{ incydent.lng|floatformat:4 }}
+                </td>
+                <td style="padding: 15px;">
+                    <span class="badge {% if incydent.priorytet == 'krytyczny' %}critical{% elif incydent.priorytet == 'wysoki' %}high{% endif %}">
+                        {{ incydent.priorytet }}
+                    </span>
+                </td>
+                <td style="padding: 15px;">
+                    <span style="text-transform: capitalize;">{{ incydent.status }}</span>
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="5" style="padding: 30px; text-align: center; color: #999;">No incidents found matching these filters.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<style>
+    .badge { padding: 5px 12px; border-radius: 20px; font-size: 11px; font-weight: bold; text-transform: uppercase; }
+    .critical { background: #ffebee; color: #c62828; border: 1px solid #ef9a9a; }
+    .high { background: #fff3e0; color: #e65100; border: 1px solid #ffcc80; }
+</style>
+{% endblock %}
