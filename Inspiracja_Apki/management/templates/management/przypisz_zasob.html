@@ -1,0 +1,27 @@
+{% extends 'management/base.html' %}
+
+{% block content %}
+<h2>Assign Resource: {{ zasob.nazwa }}</h2>
+<p>Select an active incident to deploy this unit.</p>
+
+<div style="background: #fff; padding: 25px; border-radius: 12px; max-width: 500px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+    <form method="POST">
+        {% csrf_token %}
+        <label style="display: block; margin-bottom: 10px; font-weight: bold;">Choose Target Incident:</label>
+        <select name="incydent_id" required style="width: 100%; padding: 12px; border-radius: 8px; border: 1px solid #ddd; margin-bottom: 20px;">
+            {% for incydent in incydenty %}
+                <option value="{{ incydent.id }}">
+                    INC-00{{ incydent.id }} - {{ incydent.typ }} ({{ incydent.priorytet }})
+                </option>
+            {% empty %}
+                <option disabled>No active incidents available</option>
+            {% endfor %}
+        </select>
+
+        <button type="submit" style="width: 100%; background: #000; color: #fff; border: none; padding: 15px; border-radius: 8px; cursor: pointer; font-weight: bold;">
+            Confirm Deployment
+        </button>
+        <a href="{% url 'lista_zasobow' %}" style="display: block; text-align: center; margin-top: 15px; color: #666; text-decoration: none;">Go Back</a>
+    </form>
+</div>
+{% endblock %}

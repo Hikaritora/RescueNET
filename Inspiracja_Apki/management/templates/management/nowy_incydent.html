@@ -1,0 +1,28 @@
+{% extends 'management/base.html' %}
+
+{% block content %}
+<h2>Report New Incident</h2>
+<p>Fill in the details to dispatch rescue units.</p>
+
+<div style="background: #fff; padding: 30px; border-radius: 12px; max-width: 600px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+    <form method="POST">
+        {% csrf_token %}
+        
+        {% for field in form %}
+            <div style="margin-bottom: 15px;">
+                <label style="display: block; margin-bottom: 5px; font-weight: bold;">{{ field.label }}</label>
+                {{ field }}
+            </div>
+        {% endfor %}
+
+        <button type="submit" style="background: #d32f2f; color: white; border: none; padding: 12px 25px; border-radius: 8px; cursor: pointer; font-weight: bold;">
+            Confirm and Report
+        </button>
+        <a href="{% url 'lista_incydentow' %}" style="margin-left: 15px; color: #666; text-decoration: none;">Cancel</a>
+    </form>
+</div>
+
+<style>
+    .form-control { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px; box-sizing: border-box; }
+</style>
+{% endblock %}
