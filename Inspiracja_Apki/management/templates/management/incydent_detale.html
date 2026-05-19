@@ -87,13 +87,19 @@
             </p>
         </div>
         <div>
-            <label style="font-size: 11px; color: #aaa; text-transform: uppercase; font-weight: bold;">Latitude</label>
-            <p style="margin: 5px 0; font-family: monospace;">{{ incydent.lat }}</p>
+            <label style="font-size: 11px; color: #aaa; text-transform: uppercase; font-weight: bold;">Date Reported</label>
+            <p style="margin: 5px 0; font-size: 16px; font-family: monospace;">{{ incydent.data_zgloszenia|date:"Y-m-d H:i" }}</p>
         </div>
         <div>
-            <label style="font-size: 11px; color: #aaa; text-transform: uppercase; font-weight: bold;">Longitude</label>
-            <p style="margin: 5px 0; font-family: monospace;">{{ incydent.lng }}</p>
+            <label style="font-size: 11px; color: #aaa; text-transform: uppercase; font-weight: bold;">Location</label>
+            <p style="margin: 5px 0; font-family: monospace; font-size: 14px;">{{ incydent.lat }}, {{ incydent.lng }}</p>
         </div>
+        {% if incydent.notatki %}
+        <div style="grid-column: 1 / -1;">
+            <label style="font-size: 11px; color: #aaa; text-transform: uppercase; font-weight: bold;">Notes</label>
+            <p style="margin: 5px 0; font-size: 15px; color: #444; background: #f9f9f9; padding: 12px; border-radius: 8px; border-left: 3px solid #ddd;">{{ incydent.notatki }}</p>
+        </div>
+        {% endif %}
     </div>
 </div>
 
