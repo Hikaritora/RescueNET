@@ -17,17 +17,17 @@
     <form method="GET" style="display: flex; gap: 15px; align-items: center;">
         <select name="status" onchange="this.form.submit()" style="padding: 10px; border-radius: 6px; border: 1px solid #ddd; min-width: 150px;">
             <option value="">All Statuses</option>
-            <option value="zgłoszony" {% if selected_status == 'zgłoszony' %}selected{% endif %}>Zgłoszony</option>
-            <option value="w toku" {% if selected_status == 'w toku' %}selected{% endif %}>W toku</option>
-            <option value="zakończony" {% if selected_status == 'zakończony' %}selected{% endif %}>Zakończony</option>
+            <option value="zgłoszony" {% if selected_status == 'zgłoszony' %}selected{% endif %}>Reported</option>
+            <option value="w toku" {% if selected_status == 'w toku' %}selected{% endif %}>In Progress</option>
+            <option value="zakończony" {% if selected_status == 'zakończony' %}selected{% endif %}>Closed</option>
         </select>
 
         <select name="priority" onchange="this.form.submit()" style="padding: 10px; border-radius: 6px; border: 1px solid #ddd; min-width: 150px;">
             <option value="">All Priorities</option>
-            <option value="krytyczny" {% if selected_priority == 'krytyczny' %}selected{% endif %}>Krytyczny</option>
-            <option value="wysoki" {% if selected_priority == 'wysoki' %}selected{% endif %}>Wysoki</option>
-            <option value="średni" {% if selected_priority == 'średni' %}selected{% endif %}>Średni</option>
-            <option value="niski" {% if selected_priority == 'niski' %}selected{% endif %}>Niski</option>
+            <option value="krytyczny" {% if selected_priority == 'krytyczny' %}selected{% endif %}>Critical</option>
+            <option value="wysoki" {% if selected_priority == 'wysoki' %}selected{% endif %}>High</option>
+            <option value="średni" {% if selected_priority == 'średni' %}selected{% endif %}>Medium</option>
+            <option value="niski" {% if selected_priority == 'niski' %}selected{% endif %}>Low</option>
         </select>
 
         <a href="{% url 'lista_incydentow' %}" style="color: #666; text-decoration: none; font-size: 14px;">Reset Filters</a>
@@ -58,12 +58,23 @@
                     {{ incydent.lat|floatformat:4 }}, {{ incydent.lng|floatformat:4 }}
                 </td>
                 <td style="padding: 15px;">
-                    <span class="badge {% if incydent.priorytet == 'krytyczny' %}critical{% elif incydent.priorytet == 'wysoki' %}high{% endif %}">
-                        {{ incydent.priorytet }}
-                    </span>
+                    {% if incydent.priorytet == 'krytyczny' %}
+                        <span class="badge critical">Critical</span>
+                    {% elif incydent.priorytet == 'wysoki' %}
+                        <span class="badge high">High</span>
+                    {% elif incydent.priorytet == 'średni' %}
+                        <span class="badge medium">Medium</span>
+                    {% elif incydent.priorytet == 'niski' %}
+                        <span class="badge low">Low</span>
+                    {% else %}
+                        <span class="badge">{{ incydent.priorytet }}</span>
+                    {% endif %}
                 </td>
                 <td style="padding: 15px;">
-                    <span style="text-transform: capitalize;">{{ incydent.status }}</span>
+                    {% if incydent.status == 'zgłoszony' %}Reported
+                    {% elif incydent.status == 'w toku' %}In Progress
+                    {% elif incydent.status == 'zakończony' %}Closed
+                    {% else %}{{ incydent.status }}{% endif %}
                 </td>
             </tr>
             {% empty %}
@@ -79,5 +90,7 @@
     .badge { padding: 5px 12px; border-radius: 20px; font-size: 11px; font-weight: bold; text-transform: uppercase; }
     .critical { background: #ffebee; color: #c62828; border: 1px solid #ef9a9a; }
     .high { background: #fff3e0; color: #e65100; border: 1px solid #ffcc80; }
+    .medium { background: #fffde7; color: #f57f17; border: 1px solid #fff176; }
+    .low { background: #f1f8e9; color: #558b2f; border: 1px solid #aed581; }
 </style>
 {% endblock %}
