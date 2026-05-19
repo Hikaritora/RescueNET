@@ -40,7 +40,7 @@
             <tr style="background: #f8f9fa; border-bottom: 2px solid #eee;">
                 <th style="padding: 15px; text-align: left;">Incident ID</th>
                 <th style="padding: 15px; text-align: left;">Type</th>
-                <th style="padding: 15px; text-align: left;">Location</th>
+                <th style="padding: 15px; text-align: left;">Date Reported</th>
                 <th style="padding: 15px; text-align: left;">Priority</th>
                 <th style="padding: 15px; text-align: left;">Status</th>
             </tr>
@@ -54,8 +54,8 @@
                     </a>
                 </td>
                 <td style="padding: 15px;">{{ incydent.typ }}</td>
-                <td style="padding: 15px; font-family: monospace; color: #666;">
-                    {{ incydent.lat|floatformat:4 }}, {{ incydent.lng|floatformat:4 }}
+                <td style="padding: 15px; font-family: monospace; color: #666; font-size: 13px;">
+                    {{ incydent.data_zgloszenia|date:"Y-m-d H:i" }}
                 </td>
                 <td style="padding: 15px;">
                     {% if incydent.priorytet == 'krytyczny' %}
