@@ -19,16 +19,9 @@
         
         <div style="margin-top: 15px; font-size: 14px; color: #555;">
             <strong>Specialization:</strong> {{ zasob.specjalizacja|default:"General" }}<br>
-            <strong>Current Status:</strong> {{ zasob.status }}
-        </div>
-
-        <div style="margin-top: 20px; display: flex; gap: 10px;">
-            <button style="flex: 1; padding: 8px; border: 1px solid #ddd; border-radius: 6px; background: #fff; cursor: pointer;">Details</button>
-            {% if user.rola == 'dyspozytor' or user.is_superuser %}
-            <a href="{% url 'przypisz_zasob' zasob.id %}" style="flex: 1; text-align: center; padding: 8px; border: none; border-radius: 6px; background: #000; color: #fff; cursor: pointer; text-decoration: none; font-size: 14px;">
-            Assign
-        </a>
-    {% endif %}
+            <strong>Current Status:</strong> {{ zasob.status }}<br>
+            <strong>Location:</strong>
+            <span style="font-family: monospace; font-size: 13px;">{{ zasob.lat|floatformat:4 }}, {{ zasob.lng|floatformat:4 }}</span>
         </div>
     </div>
     {% endfor %}
