@@ -18,15 +18,16 @@ class IncydentForm(forms.ModelForm):
 
     class Meta:
         model = Incydent
-        fields = ['typ', 'lat', 'lng', 'priorytet']
+        fields = ['typ', 'lat', 'lng', 'priorytet', 'notatki']
         labels = {
             'typ': 'Type',
             'lat': 'Latitude',
             'lng': 'Longitude',
-            'priorytet': 'Priority',
+            'notatki': 'Notes',
         }
         widgets = {
             'typ': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'e.g. Road Accident'}),
             'lat': forms.NumberInput(attrs={'class': 'form-control', 'step': '0.000001'}),
             'lng': forms.NumberInput(attrs={'class': 'form-control', 'step': '0.000001'}),
+            'notatki': forms.Textarea(attrs={'class': 'form-control', 'rows': 3, 'placeholder': 'Additional notes or details about the incident...'}),
         }
