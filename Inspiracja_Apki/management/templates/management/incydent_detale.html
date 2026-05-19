@@ -4,7 +4,7 @@
 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
     <div>
         <h2 style="margin: 0;">Incident Details: INC-00{{ incydent.id }}</h2>
-        <p style="color: #666; margin: 5px 0 0 0;">Reported by: {{ incydent.uzytkownik.username }}</p>
+        <p style="color: #666; margin: 5px 0 0 0;">Reported by: {{ incydent.zglaszajacy.username }}</p>
     </div>
     
     {% if incydent.status != 'zakończony' %}
@@ -65,7 +65,26 @@
         </div>
         <div>
             <label style="font-size: 11px; color: #aaa; text-transform: uppercase; font-weight: bold;">Current Status</label>
-            <p style="margin: 5px 0; font-size: 18px; color: #d32f2f; font-weight: bold;">{{ incydent.status|upper }}</p>
+            <p style="margin: 5px 0; font-size: 18px; color: #d32f2f; font-weight: bold;">
+                {% if incydent.status == 'zgłoszony' %}REPORTED
+                {% elif incydent.status == 'w toku' %}IN PROGRESS
+                {% elif incydent.status == 'zakończony' %}CLOSED
+                {% else %}{{ incydent.status|upper }}{% endif %}
+            </p>
+        </div>
+        <div>
+            <label style="font-size: 11px; color: #aaa; text-transform: uppercase; font-weight: bold;">Reported By</label>
+            <p style="margin: 5px 0; font-size: 18px;">{{ incydent.zglaszajacy.username }}</p>
+        </div>
+        <div>
+            <label style="font-size: 11px; color: #aaa; text-transform: uppercase; font-weight: bold;">Priority</label>
+            <p style="margin: 5px 0; font-size: 18px;">
+                {% if incydent.priorytet == 'krytyczny' %}Critical
+                {% elif incydent.priorytet == 'wysoki' %}High
+                {% elif incydent.priorytet == 'średni' %}Medium
+                {% elif incydent.priorytet == 'niski' %}Low
+                {% else %}{{ incydent.priorytet }}{% endif %}
+            </p>
         </div>
         <div>
             <label style="font-size: 11px; color: #aaa; text-transform: uppercase; font-weight: bold;">Latitude</label>
@@ -80,31 +99,23 @@
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        // 1. Bezpieczne pobieranie współrzędnych incydentu
         var rawLat = "{{ incydent.lat|default:'0' }}".replace(',', '.');
         var rawLng = "{{ incydent.lng|default:'0' }}".replace(',', '.');
         
         var incLat = parseFloat(rawLat);
         var incLng = parseFloat(rawLng);
         
-        // 2. Ratunek dla błędnych danych (centrujemy na środek operacji, np. Wrocław)
-        if (isNaN(incLat) || incLat === 0) {
-            incLat = 51.1079;
-        }
-        if (isNaN(incLng) || incLng === 0) {
-            incLng = 17.0385;
-        }
+        if (isNaN(incLat) || incLat === 0) { incLat = 51.1079; }
+        if (isNaN(incLng) || incLng === 0) { incLng = 17.0385; }
 
-        // 3. Mapa centralnie w punkcie incydentu (bez rozpraszania się na karetki)
         var map = L.map('map').setView([incLat, incLng], 14);
 
         L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
             attribution: '© CARTO'
         }).addTo(map);
 
-        // 4. Rysowanie czerwonej pineski incydentu
         var incidentMarker = L.marker([incLat, incLng], {
-            zIndexOffset: 1000, // Zawsze na samej górze
+            zIndexOffset: 1000,
             icon: L.icon({
                 iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png',
                 shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
@@ -112,10 +123,9 @@
             })
         }).addTo(map).bindPopup("<b>INCIDENT TARGET</b>");
 
-        // 5. Rysowanie wolnych zasobów
         {% if incydent.status != 'zakończony' %}
             {% for z in wolne_zasoby %}
-                { // Używamy let wewnątrz klamerek, żeby markery "nie zapominały" skąd są
+                {
                     let zName = "{{ z.nazwa|escapejs }}";
                     let zLat = parseFloat("{{ z.lat|default:'0' }}".replace(',', '.'));
                     let zLng = parseFloat("{{ z.lng|default:'0' }}".replace(',', '.'));
@@ -124,7 +134,7 @@
                         let zMarker = L.marker([zLat, zLng], {
                             draggable: true,
                             title: zName,
-                            origLat: zLat, // Zapisujemy adres powrotny w pinesce
+                            origLat: zLat,
                             origLng: zLng
                         }).addTo(map);
 
