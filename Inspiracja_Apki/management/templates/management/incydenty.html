@@ -14,7 +14,22 @@
 </div>
 
 <div style="background: #fff; padding: 15px; border-radius: 12px; margin-bottom: 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
-    <form method="GET" style="display: flex; gap: 15px; align-items: center;">
+    <form method="GET" style="display: flex; gap: 15px; align-items: center; flex-wrap: wrap;">
+        <select name="type" onchange="this.form.submit()" style="padding: 10px; border-radius: 6px; border: 1px solid #ddd; min-width: 200px;">
+            <option value="">All Types</option>
+            <option value="Road Incident" {% if selected_type == 'Road Incident' %}selected{% endif %}>Road Incident</option>
+            <option value="Medical Emergency" {% if selected_type == 'Medical Emergency' %}selected{% endif %}>Medical Emergency</option>
+            <option value="Public Order Disturbance" {% if selected_type == 'Public Order Disturbance' %}selected{% endif %}>Public Order Disturbance</option>
+            <option value="Domestic Violence" {% if selected_type == 'Domestic Violence' %}selected{% endif %}>Domestic Violence</option>
+            <option value="Fire" {% if selected_type == 'Fire' %}selected{% endif %}>Fire</option>
+            <option value="Technical & Weather Hazard" {% if selected_type == 'Technical & Weather Hazard' %}selected{% endif %}>Technical & Weather Hazard</option>
+            <option value="Intoxicated or Dangerous Person" {% if selected_type == 'Intoxicated or Dangerous Person' %}selected{% endif %}>Intoxicated or Dangerous Person</option>
+            <option value="Theft & Suspicious Activity" {% if selected_type == 'Theft & Suspicious Activity' %}selected{% endif %}>Theft & Suspicious Activity</option>
+            <option value="Animal Assistance" {% if selected_type == 'Animal Assistance' %}selected{% endif %}>Animal Assistance</option>
+            <option value="Missing Person" {% if selected_type == 'Missing Person' %}selected{% endif %}>Missing Person</option>
+            <option value="Other" {% if selected_type == 'Other' %}selected{% endif %}>Other</option>
+        </select>
+
         <select name="status" onchange="this.form.submit()" style="padding: 10px; border-radius: 6px; border: 1px solid #ddd; min-width: 150px;">
             <option value="">All Statuses</option>
             <option value="zgłoszony" {% if selected_status == 'zgłoszony' %}selected{% endif %}>Reported</option>
