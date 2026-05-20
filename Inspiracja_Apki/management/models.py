@@ -10,9 +10,27 @@ class Uzytkownik(AbstractUser):
     rola = models.CharField(max_length=20, choices=ROLE_CHOICES)
 
 class Incydent(models.Model):
-    PRIORITY_CHOICES = [('niski', 'Niski'), ('średni', 'Średni'), ('wysoki', 'Wysoki'), ('krytyczny', 'Krytyczny')]
-    
-    typ = models.CharField(max_length=50)
+    PRIORITY_CHOICES = [
+        ('niski', 'Niski'),
+        ('średni', 'Średni'),
+        ('wysoki', 'Wysoki'),
+        ('krytyczny', 'Krytyczny'),
+    ]
+    TYPE_CHOICES = [
+        ('Road Incident', 'Road Incident'),
+        ('Medical Emergency', 'Medical Emergency'),
+        ('Public Order Disturbance', 'Public Order Disturbance'),
+        ('Domestic Violence', 'Domestic Violence'),
+        ('Fire', 'Fire'),
+        ('Technical & Weather Hazard', 'Technical & Weather Hazard'),
+        ('Intoxicated or Dangerous Person', 'Intoxicated or Dangerous Person'),
+        ('Theft & Suspicious Activity', 'Theft & Suspicious Activity'),
+        ('Animal Assistance', 'Animal Assistance'),
+        ('Missing Person', 'Missing Person'),
+        ('Other', 'Other'),
+    ]
+
+    typ = models.CharField(max_length=50, choices=TYPE_CHOICES)
     lat = models.DecimalField(max_digits=9, decimal_places=6)
     lng = models.DecimalField(max_digits=9, decimal_places=6)
     priorytet = models.CharField(max_length=10, choices=PRIORITY_CHOICES)
@@ -31,7 +49,7 @@ class Zasob(models.Model):
     status = models.CharField(max_length=100, default='Available')
     lat = models.FloatField(default=51.1079)
     lng = models.FloatField(default=17.0385)
-    
+
     class Meta:
         db_table = 'zasob'
 
