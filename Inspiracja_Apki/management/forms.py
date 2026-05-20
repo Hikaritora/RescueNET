@@ -16,17 +16,21 @@ class IncydentForm(forms.ModelForm):
         widget=forms.Select(attrs={'class': 'form-control'})
     )
 
+    typ = forms.ChoiceField(
+        choices=Incydent.TYPE_CHOICES,
+        label='Type',
+        widget=forms.Select(attrs={'class': 'form-control'})
+    )
+
     class Meta:
         model = Incydent
         fields = ['typ', 'lat', 'lng', 'priorytet', 'notatki']
         labels = {
-            'typ': 'Type',
             'lat': 'Latitude',
             'lng': 'Longitude',
             'notatki': 'Notes',
         }
         widgets = {
-            'typ': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'e.g. Road Accident'}),
             'lat': forms.NumberInput(attrs={'class': 'form-control', 'step': '0.000001'}),
             'lng': forms.NumberInput(attrs={'class': 'form-control', 'step': '0.000001'}),
             'notatki': forms.Textarea(attrs={'class': 'form-control', 'rows': 3, 'placeholder': 'Additional notes or details about the incident...'}),
