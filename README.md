@@ -27,12 +27,13 @@
 13. dodac do incydentu podczas tworzenia mapę na ktorej sie postawi pinezke zamiast wpisywania manualnego koordynatow incydentu
 
 ~~14. w sekcji new incident przetlumaczyc na angielski rzeczy i rozwinac lat i lng na pelne slowa~~
+
 15. W incydencie status in progress nie dziala? to znaczy istnieje pewnie w bazie danych ale nie przypisuje sie nigdy, a chyba powinien jak przypiszemy jakies jednostki
 
 16. wygenerowac duza baze danych 
 
 
-Kolejnosc do zmian wg Clauda:
+Kolejnosc do zmian:
 
 ~~Etap 1 - 1-8, 14 - HTML + forms.py~~
 
