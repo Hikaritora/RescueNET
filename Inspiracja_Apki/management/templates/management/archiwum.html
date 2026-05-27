@@ -63,23 +63,29 @@
                     {{ inc.data_zgloszenia|date:"Y-m-d H:i" }}
                 </td>
                 <td style="padding: 15px;">
-                    <span style="padding: 3px 10px; border-radius: 10px; font-size: 11px; background: #f5f5f5;">
-                        {% if inc.priorytet == 'krytyczny' %}CRITICAL
-                        {% elif inc.priorytet == 'wysoki' %}HIGH
-                        {% elif inc.priorytet == 'średni' %}MEDIUM
-                        {% elif inc.priorytet == 'niski' %}LOW
-                        {% else %}{{ inc.priorytet|upper }}{% endif %}
-                    </span>
-                </td>
-                <td style="padding: 15px; color: {% if inc.status == 'zakończony' %}#388e3c{% else %}#e65100{% endif %}; font-weight: bold;">
-                    {% if inc.status == 'zgłoszony' %}REPORTED
-                    {% elif inc.status == 'w toku' %}IN PROGRESS
-                    {% elif inc.status == 'zakończony' %}CLOSED
-                    {% else %}{{ inc.status|upper }}{% endif %}
-                </td>
-                <td style="padding: 15px; font-family: monospace; font-size: 12px; color: #666;">
+                    {% if inc.priorytet == 'krytyczny' %}
+                        <span class="badge critical">Critical</span>
+                    {% elif inc.priorytet == 'wysoki' %}
+                        <span class="badge high">High</span>
+                    {% elif inc.priorytet == 'średni' %}
+                        <span class="badge medium">Medium</span>
+                    {% elif inc.priorytet == 'niski' %}
+                        <span class="badge low">Low</span>
+                    {% else %}
+                        <span class="badge">{{ inc.priorytet|upper }}</span>
+                    {% endif %}
+                 </td>
+                 <td style="padding: 12px;">
+                    <span class="status-chip {% if inc.status == 'zgłoszony' %}status-reported{% elif inc.status == 'w toku' %}status-in-progress{% elif inc.status == 'zakończony' %}status-closed{% else %}status-reported{% endif %}">
+                         {% if inc.status == 'zgłoszony' %}REPORTED
+                         {% elif inc.status == 'w toku' %}IN PROGRESS
+                         {% elif inc.status == 'zakończony' %}CLOSED
+                         {% else %}{{ inc.status|upper }}{% endif %}
+                     </span>
+                 </td>
+                 <td style="padding: 15px; font-family: monospace; font-size: 12px; color: #666;">
                     {{ inc.lat|floatformat:4 }}, {{ inc.lng|floatformat:4 }}
-                </td>
+                 </td>
             </tr>
             {% endfor %}
         </tbody>

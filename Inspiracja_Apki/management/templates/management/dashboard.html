@@ -30,6 +30,7 @@
             <tr style="text-align: left; color: #999; font-size: 12px; text-transform: uppercase; border-bottom: 1px solid #eee;">
                 <th style="padding: 10px;">ID</th>
                 <th style="padding: 10px;">Type</th>
+                <th style="padding: 10px;">Priority</th>
                 <th style="padding: 10px;">Status</th>
                 <th style="padding: 10px;">Action</th>
             </tr>
@@ -40,8 +41,24 @@
                 <td style="padding: 12px; font-weight: bold;">INC-00{{ inc.id }}</td>
                 <td style="padding: 12px;">{{ inc.typ }}</td>
                 <td style="padding: 12px;">
-                    <span style="font-size: 11px; padding: 4px 8px; border-radius: 4px; background: {% if inc.status == 'zakończony' %}#e8f5e9{% else %}#fff3e0{% endif %}; color: {% if inc.status == 'zakończony' %}#2e7d32{% else %}#e65100{% endif %};">
-                        {{ inc.status|upper }}
+                    {% if inc.priorytet == 'krytyczny' %}
+                        <span class="badge critical">Critical</span>
+                    {% elif inc.priorytet == 'wysoki' %}
+                        <span class="badge high">High</span>
+                    {% elif inc.priorytet == 'średni' %}
+                        <span class="badge medium">Medium</span>
+                    {% elif inc.priorytet == 'niski' %}
+                        <span class="badge low">Low</span>
+                    {% else %}
+                        <span class="badge">{{ inc.priorytet }}</span>
+                    {% endif %}
+                </td>
+                <td style="padding: 12px;">
+                    <span class="status-chip {% if inc.status == 'zgłoszony' %}status-reported{% elif inc.status == 'w toku' %}status-in-progress{% elif inc.status == 'zakończony' %}status-closed{% else %}status-reported{% endif %}">
+                        {% if inc.status == 'zgłoszony' %}REPORTED
+                        {% elif inc.status == 'w toku' %}IN PROGRESS
+                        {% elif inc.status == 'zakończony' %}CLOSED
+                        {% else %}{{ inc.status|upper }}{% endif %}
                     </span>
                 </td>
                 <td style="padding: 12px;">

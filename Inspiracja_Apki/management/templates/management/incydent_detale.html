@@ -76,11 +76,13 @@
         </div>
         <div>
             <label style="font-size: 11px; color: #aaa; text-transform: uppercase; font-weight: bold;">Current Status</label>
-            <p style="margin: 5px 0; font-size: 18px; color: #d32f2f; font-weight: bold;">
-                {% if incydent.status == 'zgłoszony' %}REPORTED
-                {% elif incydent.status == 'w toku' %}IN PROGRESS
-                {% elif incydent.status == 'zakończony' %}CLOSED
-                {% else %}{{ incydent.status|upper }}{% endif %}
+            <p style="margin: 5px 0;">
+                <span class="status-chip {% if incydent.status == 'zgłoszony' %}status-reported{% elif incydent.status == 'w toku' %}status-in-progress{% elif incydent.status == 'zakończony' %}status-closed{% else %}status-reported{% endif %}">
+                    {% if incydent.status == 'zgłoszony' %}REPORTED
+                    {% elif incydent.status == 'w toku' %}IN PROGRESS
+                    {% elif incydent.status == 'zakończony' %}CLOSED
+                    {% else %}{{ incydent.status|upper }}{% endif %}
+                </span>
             </p>
         </div>
         <div>
@@ -89,12 +91,18 @@
         </div>
         <div>
             <label style="font-size: 11px; color: #aaa; text-transform: uppercase; font-weight: bold;">Priority</label>
-            <p style="margin: 5px 0; font-size: 18px;">
-                {% if incydent.priorytet == 'krytyczny' %}Critical
-                {% elif incydent.priorytet == 'wysoki' %}High
-                {% elif incydent.priorytet == 'średni' %}Medium
-                {% elif incydent.priorytet == 'niski' %}Low
-                {% else %}{{ incydent.priorytet }}{% endif %}
+            <p style="margin: 5px 0;">
+                {% if incydent.priorytet == 'krytyczny' %}
+                    <span class="badge critical">Critical</span>
+                {% elif incydent.priorytet == 'wysoki' %}
+                    <span class="badge high">High</span>
+                {% elif incydent.priorytet == 'średni' %}
+                    <span class="badge medium">Medium</span>
+                {% elif incydent.priorytet == 'niski' %}
+                    <span class="badge low">Low</span>
+                {% else %}
+                    <span class="badge">{{ incydent.priorytet }}</span>
+                {% endif %}
             </p>
         </div>
         <div>

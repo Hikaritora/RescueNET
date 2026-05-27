@@ -1,3 +1,4 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -7,7 +8,8 @@
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <meta name="referrer" content="no-referrer-when-downgrade">
-    
+    <link rel="stylesheet" href="{% static 'management/css/common_badges.css' %}">
+
     <style>
         body, html { margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f4f7f6; height: 100%; }
         
@@ -39,9 +41,7 @@
         /* Jeśli użytkownik NIE jest zalogowany (strona logowania), usuwamy margines */
         .no-sidebar .main-content { margin-left: 0; display: flex; align-items: center; justify-content: center; }
 
-        /* TABELE I BADGE (ogólne) */
-        .badge { padding: 5px 12px; border-radius: 20px; font-size: 11px; font-weight: bold; }
-        .critical { background: #ffebee; color: #c62828; }
+        /* shared status/priority badges live in management/css/common_badges.css */
     </style>
 </head>
 <body class="{% if not user.is_authenticated %}no-sidebar{% endif %}">

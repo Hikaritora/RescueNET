@@ -86,11 +86,13 @@
                     {% endif %}
                 </td>
                 <td style="padding: 15px;">
-                    {% if incydent.status == 'zgłoszony' %}Reported
-                    {% elif incydent.status == 'w toku' %}In Progress
-                    {% elif incydent.status == 'zakończony' %}Closed
-                    {% else %}{{ incydent.status }}{% endif %}
-                </td>
+                    <span class="status-chip {% if incydent.status == 'zgłoszony' %}status-reported{% elif incydent.status == 'w toku' %}status-in-progress{% elif incydent.status == 'zakończony' %}status-closed{% else %}status-reported{% endif %}">
+                        {% if incydent.status == 'zgłoszony' %}REPORTED
+                        {% elif incydent.status == 'w toku' %}IN PROGRESS
+                        {% elif incydent.status == 'zakończony' %}CLOSED
+                        {% else %}{{ incydent.status|upper }}{% endif %}
+                    </span>
+                 </td>
             </tr>
             {% empty %}
             <tr>
@@ -101,11 +103,4 @@
     </table>
 </div>
 
-<style>
-    .badge { padding: 5px 12px; border-radius: 20px; font-size: 11px; font-weight: bold; text-transform: uppercase; }
-    .critical { background: #ffebee; color: #c62828; border: 1px solid #ef9a9a; }
-    .high { background: #fff3e0; color: #e65100; border: 1px solid #ffcc80; }
-    .medium { background: #fffde7; color: #f57f17; border: 1px solid #fff176; }
-    .low { background: #f1f8e9; color: #558b2f; border: 1px solid #aed581; }
-</style>
 {% endblock %}
