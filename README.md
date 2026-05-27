@@ -41,11 +41,11 @@ Kolejnosc do zmian:
 
 ~~Etap 3 — 10 - dropdown typów incydentu~~
 
-Etap 4 — 15 — views.py: status "in progress" przy przypisaniu zasobu
+~~Etap 4 — 15 — views.py: status "in progress" przy przypisaniu zasobu~~
 
-Etap 5 — 9 — nowy widok/formularz/szablon: tworzenie zasobu przez GUI
+~~Etap 5 — 9 — nowy widok/formularz/szablon: tworzenie zasobu przez GUI~~
 
-Etap 6 — 13 — mapa przy tworzeniu incydentu
+~~Etap 6 — 13 — mapa przy tworzeniu incydentu~~
 
 Etap 7 — 16 — generowanie dużej bazy danych
 
