@@ -19,7 +19,6 @@ for i in range(50):
     Zasob.objects.create(nazwa=f"Unit WRO-{i+1}", typ=random.choice(typy_zasobow), lat=round(random.uniform(LAT_MIN, LAT_MAX), 6), lng=round(random.uniform(LNG_MIN, LNG_MAX), 6), dostepnosc=True)
 
 print("Generowanie 500 incydentów...")
-# Nowe, zaktualizowane listy prosto z Twojego UI:
 typy_incydentow = ['Road Incident', 'Medical Emergency', 'Public Order Disturbance', 'Domestic Violence', 'Fire', 'Technical & Weather Hazard', 'Intoxicated or Dangerous Person', 'Theft & Suspicious Activity', 'Animal Assistance', 'Missing Person', 'Other']
 statusy = ['Reported', 'In progress', 'Closed']
 priorytety = ['Low', 'Medium', 'High', 'Critical']
