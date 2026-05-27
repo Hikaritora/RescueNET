@@ -21,7 +21,7 @@ for i in range(50):
 print("Generowanie 500 incydentów...")
 # Nowe, zaktualizowane listy prosto z Twojego UI:
 typy_incydentow = ['Road Incident', 'Medical Emergency', 'Public Order Disturbance', 'Domestic Violence', 'Fire', 'Technical & Weather Hazard', 'Intoxicated or Dangerous Person', 'Theft & Suspicious Activity', 'Animal Assistance', 'Missing Person', 'Other']
-statusy = ['Reported', 'in progress', 'Closed']
+statusy = ['Reported', 'In progress', 'Closed']
 priorytety = ['Low', 'Medium', 'High', 'Critical']
 
 for i in range(500):
