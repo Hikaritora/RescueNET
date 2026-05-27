@@ -1,9 +1,35 @@
-{% extends 'management/base.html' %} {% block content %}
-<div class="container mt-5">
-    <h2>Dodaj nowy zasób (Karetka/Straż)</h2>
+{% extends 'management/base.html' %}
+
+{% block content %}
+<h2>Add New Resource</h2>
+<p>Register a new emergency unit, vehicle, or personnel.</p>
+
+<div style="background: #fff; padding: 30px; border-radius: 12px; max-width: 600px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
     <form method="POST">
-        {% csrf_token %} {{ form.as_p }} <button type="submit" class="btn btn-success mt-3">Utwórz zasób</button>
-        <a href="{% url 'dashboard' %}" class="btn btn-secondary mt-3">Anuluj</a>
+        {% csrf_token %}
+
+        {% for field in form %}
+        <div style="margin-bottom: 15px;">
+            <label style="display: block; margin-bottom: 5px; font-weight: bold;">{{ field.label }}</label>
+            {{ field }}
+            {% if field.errors %}
+            <p style="color: #d32f2f; font-size: 13px; margin: 5px 0 0 0;">{{ field.errors|join:", " }}</p>
+            {% endif %}
+        </div>
+        {% endfor %}
+
+        <div style="margin-top: 25px; display: flex; align-items: center; gap: 15px;">
+            <button type="submit" style="background: #000; color: #fff; border: none; padding: 12px 25px; border-radius: 8px; cursor: pointer; font-weight: bold;">
+                Add Resource
+            </button>
+            <a href="{% url 'lista_zasobow' %}" style="color: #666; text-decoration: none;">Cancel</a>
+        </div>
     </form>
 </div>
+
+<style>
+    .form-control { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px; box-sizing: border-box; font-size: 14px; }
+    .form-control:focus { outline: none; border-color: #000; }
+</style>
+
 {% endblock %}
