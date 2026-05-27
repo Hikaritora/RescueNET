@@ -75,7 +75,7 @@ def przypisz_zasob(request, zasob_id):
         zasob.dostepnosc = False
         zasob.status = f"Assigned to INC-{incydent.id}"
         zasob.save()
-        incydent.status = 'in progress'
+        incydent.status = 'In progress'
         incydent.save()
 
         return redirect('szczegoly_incydentu', pk=inc_id)
