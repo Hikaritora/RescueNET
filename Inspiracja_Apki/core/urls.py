@@ -27,6 +27,7 @@ from management.views import dashboard
 from management.views import archiwum_incydentow
 from management.views import eksportuj_raport
 from management.views import dodaj_zasob
+from management.views import usun_przypisanie_zasobu
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -42,4 +43,5 @@ urlpatterns = [
     path('archiwum/', archiwum_incydentow, name='archiwum'),
     path('archiwum/export/', eksportuj_raport, name='eksport_csv'),
     path('zasob/dodaj/', dodaj_zasob, name='dodaj_zasob'),
+    path('incydenty/<int:pk>/usun-zasob/<int:zasob_id>/', usun_przypisanie_zasobu, name='usun_przypisanie_zasobu'),
 ]

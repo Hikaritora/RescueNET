@@ -56,8 +56,41 @@ def nowy_incydent(request):
 from .models import Zasob
 @login_required
 def lista_zasobow(request):
+    filter_type = request.GET.get('type')
+    filter_status = request.GET.get('status')
+    filter_dostepnosc = request.GET.get('dostepnosc')
+    filter_specjalizacja = request.GET.get('specjalizacja')
+
     zasoby = Zasob.objects.all().order_by('typ', 'nazwa')
-    return render(request, 'management/zasoby.html', {'zasoby': zasoby})
+
+    if filter_type:
+        zasoby = zasoby.filter(typ=filter_type)
+    if filter_status:
+        zasoby = zasoby.filter(status=filter_status)
+    if filter_dostepnosc:
+        is_available = filter_dostepnosc == 'available'
+        zasoby = zasoby.filter(dostepnosc=is_available)
+    if filter_specjalizacja:
+        zasoby = zasoby.filter(specjalizacja=filter_specjalizacja)
+
+    # Get unique values for filter dropdowns
+    all_types = Zasob.objects.values_list('typ', flat=True).distinct()
+    all_statuses = Zasob.objects.values_list('status', flat=True).distinct()
+    all_specjaliz = Zasob.objects.filter(specjalizacja__gt='').values_list('specjalizacja', flat=True).distinct()
+    # Always include "General" for empty/default specialization
+    all_specjaliz = set(all_specjaliz)
+    all_specjaliz.add('General')
+
+    return render(request, 'management/zasoby.html', {
+        'zasoby': zasoby,
+        'selected_type': filter_type,
+        'selected_status': filter_status,
+        'selected_dostepnosc': filter_dostepnosc,
+        'selected_specjalizacja': filter_specjalizacja,
+        'all_types': all_types,
+        'all_statuses': all_statuses,
+        'all_specjaliz': all_specjaliz,
+    })
 
 from django.shortcuts import get_object_or_404, redirect, render
 from .models import Zasob, Incydent
@@ -81,6 +114,30 @@ def przypisz_zasob(request, zasob_id):
         return redirect('szczegoly_incydentu', pk=inc_id)
 
     return redirect('lista_incydentow')
+
+
+from django.contrib.auth.decorators import login_required
+from django.shortcuts import get_object_or_404, redirect
+from .models import Incydent, Zasob
+
+@login_required
+def usun_przypisanie_zasobu(request, pk, zasob_id):
+    incydent = get_object_or_404(Incydent, pk=pk)
+    zasob = get_object_or_404(Zasob, pk=zasob_id)
+
+    # Make sure resource is assigned to this incident before releasing
+    if f"INC-{incydent.id}" in (zasob.status or ""):
+        zasob.dostepnosc = True
+        zasob.status = "Available"
+        zasob.save()
+
+    # Optional: if no resources remain assigned and incident isn't closed, set back to "zgłoszony"
+    assigned_left = Zasob.objects.filter(status__icontains=f"INC-{incydent.id}").exists()
+    if not assigned_left and incydent.status != "zakończony":
+        incydent.status = "zgłoszony"
+        incydent.save()
+
+    return redirect("szczegoly_incydentu", pk=pk)
 
 
 from django.shortcuts import get_object_or_404, redirect
