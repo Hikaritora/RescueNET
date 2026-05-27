@@ -32,8 +32,9 @@
 
 ~~16. wygenerowac duza baze danych~~
 
-17. frontend w dodawaniu zasobów - dodac mapke i przerzucanie na strone zasobow
-18. naprawic dodawanie 2 zasobow o tej samej nazwie
+~~17. frontend w dodawaniu zasobów - dodac mapke i przerzucanie na strone zasobow~~
+
+18. ~~18. naprawic dodawanie 2 zasobow o tej samej nazwie~~
 
 18. przepisać na angielski
 
