@@ -1,6 +1,7 @@
-Najpierw w terminalu wpisac:
-python manage.py shell
-!!!!!!!!!!!!!!!!
+#Najpierw w terminalu wpisac:
+#python manage.py shell
+#albo po prostu go odpalić XD
+#!!!!!!!!!!!!!!!!
 
 
 import random
