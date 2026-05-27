@@ -4,6 +4,13 @@
 <h2>Resource Management</h2>
 <p>Status of emergency units, personnel, and equipment.</p>
 
+
+{% if request.user.rola == 'admin' or request.user.is_superuser %}
+    <a href="{% url 'dodaj_zasob' %}" class="btn btn-primary mb-3">
+        + Add a Resource
+    </a>
+{% endif %}
+
 <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px;">
     {% for zasob in zasoby %}
     <div style="background: #fff; padding: 20px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border-left: 5px solid {% if zasob.dostepnosc %}#388e3c{% else %}#d32f2f{% endif %};">

@@ -1,0 +1,9 @@
+{% extends 'management/base.html' %} {% block content %}
+<div class="container mt-5">
+    <h2>Dodaj nowy zasób (Karetka/Straż)</h2>
+    <form method="POST">
+        {% csrf_token %} {{ form.as_p }} <button type="submit" class="btn btn-success mt-3">Utwórz zasób</button>
+        <a href="{% url 'dashboard' %}" class="btn btn-secondary mt-3">Anuluj</a>
+    </form>
+</div>
+{% endblock %}

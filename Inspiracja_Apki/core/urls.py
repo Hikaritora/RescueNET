@@ -26,6 +26,7 @@ from management.views import szczegoly_incydentu
 from management.views import dashboard
 from management.views import archiwum_incydentow
 from management.views import eksportuj_raport
+from management.views import dodaj_zasob
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -40,4 +41,5 @@ urlpatterns = [
     path('', dashboard, name='dashboard'),
     path('archiwum/', archiwum_incydentow, name='archiwum'),
     path('archiwum/export/', eksportuj_raport, name='eksport_csv'),
+    path('zasob/dodaj/', dodaj_zasob, name='dodaj_zasob'),
 ]

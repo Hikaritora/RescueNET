@@ -1,7 +1,13 @@
 from django.shortcuts import render
 from django.db.models import Count
-from django.shortcuts import render
 from .models import Incydent
+from django.shortcuts import redirect
+from django.contrib.auth.decorators import login_required
+from .forms import ZasobForm
+
+
+
+
 
 def lista_incydentow(request):
     filter_priority = request.GET.get('priority')
@@ -69,6 +75,8 @@ def przypisz_zasob(request, zasob_id):
         zasob.dostepnosc = False
         zasob.status = f"Assigned to INC-{incydent.id}"
         zasob.save()
+        incydent.status = 'in progress'
+        incydent.save()
 
         return redirect('szczegoly_incydentu', pk=inc_id)
 
@@ -164,3 +172,19 @@ def eksportuj_raport(request):
         writer.writerow([inc.id, inc.typ, inc.priorytet, inc.status, inc.lat, inc.lng, inc.data_zgloszenia])
 
     return response
+
+@login_required
+def dodaj_zasob(request):
+    
+    if request.user.rola != 'admin' and not request.user.is_superuser:
+        return redirect('dashboard') 
+
+    if request.method == 'POST':
+        form = ZasobForm(request.POST)
+        if form.is_valid():
+            form.save() 
+            return redirect('dashboard') 
+    else:
+        form = ZasobForm() 
+
+    return render(request, 'management/dodaj_zasob.html', {'form': form})

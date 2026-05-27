@@ -1,8 +1,11 @@
 {% extends 'management/base.html' %}
 
 {% block content %}
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
 <h2>Report New Incident</h2>
-<p>Fill in the details to dispatch rescue units.</p>
+<p>Fill in the details to dispatch rescue units. <strong>Click on the map to set the exact location.</strong></p>
 
 <div style="background: #fff; padding: 30px; border-radius: 12px; max-width: 600px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
     <form method="POST">
@@ -15,6 +18,12 @@
             </div>
         {% endfor %}
 
+        <div style="margin-bottom: 20px; margin-top: 10px;">
+            <label style="display: block; margin-bottom: 5px; font-weight: bold;">Incident Location (Interactive Map)</label>
+            <div id="map" style="height: 300px; width: 100%; border-radius: 8px; border: 1px solid #ddd; z-index: 1;"></div>
+            <small style="color: #888;">Drag the pin or click anywhere on the map to update the coordinates automatically.</small>
+        </div>
+
         <button type="submit" style="background: #d32f2f; color: white; border: none; padding: 12px 25px; border-radius: 8px; cursor: pointer; font-weight: bold;">
             Confirm and Report
         </button>
@@ -25,4 +34,46 @@
 <style>
     .form-control { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px; box-sizing: border-box; }
 </style>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        
+        var map = L.map('map').setView([51.1079, 17.0385], 12);
+
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 19,
+            attribution: '© OpenStreetMap'
+        }).addTo(map);
+
+        
+        var marker = L.marker([51.1079, 17.0385], {draggable: true}).addTo(map);
+
+        
+        function wpiszWspolrzedne(lat, lng) {
+            
+            var latInput = document.getElementById('id_lat');
+            var lngInput = document.getElementById('id_lng');
+            
+            if (latInput && lngInput) {
+                latInput.value = lat.toFixed(6);
+                lngInput.value = lng.toFixed(6);
+            }
+        }
+
+        
+        marker.on('dragend', function(e) {
+            var pozycja = marker.getLatLng();
+            wpiszWspolrzedne(pozycja.lat, pozycja.lng);
+        });
+
+        
+        map.on('click', function(e) {
+            marker.setLatLng(e.latlng);
+            wpiszWspolrzedne(e.latlng.lat, e.latlng.lng);
+        });
+
+        
+        wpiszWspolrzedne(51.1079, 17.0385);
+    });
+</script>
 {% endblock %}
