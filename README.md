@@ -16,7 +16,7 @@
 
 ~~8. upewnic sie czy w danym incydencie widac kto zreportowal go?~~
 
-9. dodac mozliwosc tworzenia zasobow jako admin w GUI zamiast tylko przez django administration
+~~9. dodac mozliwosc tworzenia zasobow jako admin w GUI zamiast tylko przez django administration~~
 
 ~~10. w dodawaniu incydentu typ moze nie wpisywac recznie tylko dropdown list i jakies częste bo wtedy statystyki sie beda zgadzac i nie bedzie np 2 roznych typow "incydent drogowy" i "Incydent drogowy"~~
 
@@ -24,11 +24,11 @@
 
 ~~12. dodac do incydentu pole na notatki od osoby tworzącej zgloszenie~~
 
-13. dodac do incydentu podczas tworzenia mapę na ktorej sie postawi pinezke zamiast wpisywania manualnego koordynatow incydentu
+~~13. dodac do incydentu podczas tworzenia mapę na ktorej sie postawi pinezke zamiast wpisywania manualnego koordynatow incydentu~~
 
 ~~14. w sekcji new incident przetlumaczyc na angielski rzeczy i rozwinac lat i lng na pelne slowa~~
 
-15. W incydencie status in progress nie dziala? to znaczy istnieje pewnie w bazie danych ale nie przypisuje sie nigdy, a chyba powinien jak przypiszemy jakies jednostki
+~~15. W incydencie status in progress nie dziala? to znaczy istnieje pewnie w bazie danych ale nie przypisuje sie nigdy, a chyba powinien jak przypiszemy jakies jednostki~~
 
 16. wygenerowac duza baze danych 
 
