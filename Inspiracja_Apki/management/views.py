@@ -231,6 +231,19 @@ def eksportuj_raport(request):
     return response
 
 @login_required
+def usun_zasob(request, zasob_id):
+    if request.user.rola != 'admin' and not request.user.is_superuser:
+        return redirect('lista_zasobow')
+
+    zasob = get_object_or_404(Zasob, id=zasob_id)
+
+    if request.method == 'POST':
+        zasob.delete()
+
+    return redirect('lista_zasobow')
+
+
+@login_required
 def dodaj_zasob(request):
     
     if request.user.rola != 'admin' and not request.user.is_superuser:
