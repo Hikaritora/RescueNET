@@ -30,7 +30,15 @@
 
 ~~15. W incydencie status in progress nie dziala? to znaczy istnieje pewnie w bazie danych ale nie przypisuje sie nigdy, a chyba powinien jak przypiszemy jakies jednostki~~
 
-16. wygenerowac duza baze danych 
+~~16. wygenerowac duza baze danych~~
+
+17. frontend w dodawaniu zasobów
+
+18. przepisać na angielski
+
+19. OPCJONALNIE: dodatkowe typu userów (policja, strażacy) i system przypisywania użytkowników do zdarzeń
+
+20. ogarnąć modele - w zasobach: specjalizaja, dostepnosc i status (te 2 są imo tym samym), w incydencie: status
 
 
 Kolejnosc do zmian:
