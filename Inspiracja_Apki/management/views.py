@@ -252,8 +252,11 @@ def dodaj_zasob(request):
     if request.method == 'POST':
         form = ZasobForm(request.POST)
         if form.is_valid():
-            form.save() 
-            return redirect('dashboard') 
+            if Zasob.objects.filter(nazwa=form.cleaned_data['nazwa']).exists():
+                form.add_error('nazwa', 'A resource with this name already exists.')
+            else:
+                form.save()
+                return redirect('lista_zasobow')
     else:
         form = ZasobForm() 
 
