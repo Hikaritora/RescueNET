@@ -1,9 +1,11 @@
-from django.shortcuts import render
+import csv
+from django.shortcuts import render, redirect, get_object_or_404
 from django.db.models import Count
-from .models import Incydent
-from django.shortcuts import redirect
-from django.contrib.auth.decorators import login_required
-from .forms import ZasobForm
+from django.http import HttpResponse
+from django.contrib.auth.decorators import login_required, user_passes_test
+
+from .models import Incydent, Zasob
+from .forms import IncydentForm, ZasobForm
 
 
 
@@ -30,9 +32,6 @@ def lista_incydentow(request):
         'selected_type': filter_type,
     })
 
-from django.shortcuts import render, redirect
-from .forms import IncydentForm
-from django.contrib.auth.decorators import login_required, user_passes_test
 
 def czy_dyspozytor(user):
     return user.rola == 'dyspozytor' or user.is_superuser
@@ -45,7 +44,7 @@ def nowy_incydent(request):
         if form.is_valid():
             incydent = form.save(commit=False)
             incydent.zglaszajacy = request.user
-            incydent.status = 'zgłoszony'
+            incydent.status = 'reported'
             incydent.save()
             return redirect('lista_incydentow')
     else:
@@ -53,7 +52,6 @@ def nowy_incydent(request):
 
     return render(request, 'management/nowy_incydent.html', {'form': form})
 
-from .models import Zasob
 @login_required
 def lista_zasobow(request):
     filter_type = request.GET.get('type')
@@ -92,8 +90,6 @@ def lista_zasobow(request):
         'all_specjaliz': all_specjaliz,
     })
 
-from django.shortcuts import get_object_or_404, redirect, render
-from .models import Zasob, Incydent
 @login_required
 def przypisz_zasob(request, zasob_id):
     zasob = get_object_or_404(Zasob, id=zasob_id)
@@ -102,13 +98,13 @@ def przypisz_zasob(request, zasob_id):
     if inc_id:
         incydent = get_object_or_404(Incydent, id=inc_id)
 
-        if incydent.status == 'zakończony':
+        if incydent.status == 'closed':
             return redirect('szczegoly_incydentu', pk=inc_id)
 
         zasob.dostepnosc = False
         zasob.status = f"Assigned to INC-{incydent.id}"
         zasob.save()
-        incydent.status = 'In progress'
+        incydent.status = 'in_progress'
         incydent.save()
 
         return redirect('szczegoly_incydentu', pk=inc_id)
@@ -116,9 +112,6 @@ def przypisz_zasob(request, zasob_id):
     return redirect('lista_incydentow')
 
 
-from django.contrib.auth.decorators import login_required
-from django.shortcuts import get_object_or_404, redirect
-from .models import Incydent, Zasob
 
 @login_required
 def usun_przypisanie_zasobu(request, pk, zasob_id):
@@ -133,19 +126,17 @@ def usun_przypisanie_zasobu(request, pk, zasob_id):
 
     # Optional: if no resources remain assigned and incident isn't closed, set back to "zgłoszony"
     assigned_left = Zasob.objects.filter(status__icontains=f"INC-{incydent.id}").exists()
-    if not assigned_left and incydent.status != "zakończony":
-        incydent.status = "zgłoszony"
+    if not assigned_left and incydent.status != "closed":
+        incydent.status = "reported"
         incydent.save()
 
     return redirect("szczegoly_incydentu", pk=pk)
 
 
-from django.shortcuts import get_object_or_404, redirect
-from .models import Incydent, Zasob
 @login_required
 def zakoncz_incydent(request, pk):
     incydent = get_object_or_404(Incydent, pk=pk)
-    incydent.status = 'zakończony'
+    incydent.status = 'closed'
     incydent.save()
 
     Zasob.objects.filter(status__icontains=f"INC-{incydent.id}").update(
@@ -155,8 +146,6 @@ def zakoncz_incydent(request, pk):
 
     return redirect('szczegoly_incydentu', pk=pk)
 
-from django.shortcuts import render, get_object_or_404
-from .models import Incydent, Zasob
 @login_required
 def szczegoly_incydentu(request, pk):
     incydent = get_object_or_404(Incydent, pk=pk)
@@ -170,11 +159,10 @@ def szczegoly_incydentu(request, pk):
     })
 
 
-from .models import Incydent, Zasob
 @login_required
 def dashboard(request):
     total_incidents = Incydent.objects.count()
-    active_incidents = Incydent.objects.exclude(status='zakończony').count()
+    active_incidents = Incydent.objects.exclude(status='closed').filter(status__in=['reported', 'in_progress', 'w toku', 'zgłoszony', 'In progress']).count()
     available_resources = Zasob.objects.filter(dostepnosc=True).count()
     recent_incidents = Incydent.objects.all().order_by('-id')[:5]
 
@@ -186,16 +174,11 @@ def dashboard(request):
     })
 
 
-import csv
-from django.http import HttpResponse
-from .models import Incydent
-
-from django.db.models import Count
 @login_required
 def archiwum_incydentow(request):
     total = Incydent.objects.count()
-    active = Incydent.objects.exclude(status='zakończony').count()
-    resolved = Incydent.objects.filter(status='zakończony').count()
+    active = Incydent.objects.exclude(status='closed').filter(status__in=['reported', 'in_progress', 'w toku', 'zgłoszony', 'In progress']).count()
+    resolved = Incydent.objects.filter(status='closed').count()
 
     type_data = Incydent.objects.values('typ').annotate(count=Count('id'))
     type_labels = [item['typ'] for item in type_data]

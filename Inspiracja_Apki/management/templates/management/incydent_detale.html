@@ -7,7 +7,7 @@
         <p style="color: #666; margin: 5px 0 0 0;">Reported by: {{ incydent.zglaszajacy.username }}</p>
     </div>
     
-    {% if incydent.status != 'zakończony' %}
+    {% if incydent.status != 'closed' %}
     <form action="{% url 'zakoncz_incydent' incydent.id %}" method="post">
         {% csrf_token %}
         <button type="submit" style="background: #000; color: #fff; border: none; padding: 10px 20px; border-radius: 8px; font-weight: bold; cursor: pointer;">
@@ -42,8 +42,8 @@
         <strong style="display:block; color:#333;">{{ zasob.nazwa }}</strong>
         <small style="color:#666; text-transform: uppercase;">{{ zasob.typ }}</small>
     </div>
-    {% if incydent.status != 'zakończony' %}
-    <form method="post" action="{% url 'usun_przypisanie_zasobu' incydent.id zasob.id %}" style="margin:0;">
+     {% if incydent.status != 'closed' %}
+     <form method="post" action="{% url 'usun_przypisanie_zasobu' incydent.id zasob.id %}" style="margin:0;">
         {% csrf_token %}
         <button type="submit" title="Remove unit"
             style="border:none; background:#fff; color:#d32f2f; font-weight:bold; cursor:pointer; width:28px; height:28px; border-radius:50%; box-shadow:0 1px 3px rgba(0,0,0,0.15);">
@@ -56,7 +56,7 @@
                 <div style="text-align: center; padding: 40px 20px; color: #bbb;">
                     <p style="font-size: 40px; margin: 0;">🚑</p>
                     <p style="font-style: italic;">No units assigned to this incident yet.</p>
-                    {% if incydent.status != 'zakończony' %}
+                    {% if incydent.status != 'closed' %}
                     <small>Drag blue markers on the map to assign units.</small>
                     {% endif %}
                 </div>
@@ -77,10 +77,10 @@
         <div>
             <label style="font-size: 11px; color: #aaa; text-transform: uppercase; font-weight: bold;">Current Status</label>
             <p style="margin: 5px 0;">
-                <span class="status-chip {% if incydent.status == 'zgłoszony' %}status-reported{% elif incydent.status == 'w toku' %}status-in-progress{% elif incydent.status == 'zakończony' %}status-closed{% else %}status-reported{% endif %}">
-                    {% if incydent.status == 'zgłoszony' %}REPORTED
-                    {% elif incydent.status == 'w toku' %}IN PROGRESS
-                    {% elif incydent.status == 'zakończony' %}CLOSED
+                <span class="status-chip {% if incydent.status == 'reported' %}status-reported{% elif incydent.status == 'in_progress' %}status-in-progress{% elif incydent.status == 'closed' %}status-closed{% else %}status-reported{% endif %}">
+                    {% if incydent.status == 'reported' %}REPORTED
+                    {% elif incydent.status == 'in_progress' %}IN PROGRESS
+                    {% elif incydent.status == 'closed' %}CLOSED
                     {% else %}{{ incydent.status|upper }}{% endif %}
                 </span>
             </p>
@@ -189,7 +189,7 @@ function iconForType(typeRaw) {
     return ICONS.DEFAULT;
 }
 
-        {% if incydent.status != 'zakończony' %}
+        {% if incydent.status != 'closed' %}
             {% for z in wolne_zasoby %}
                 {
                     let zName = "{{ z.nazwa|escapejs }}";

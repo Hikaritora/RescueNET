@@ -11,10 +11,10 @@ class Uzytkownik(AbstractUser):
 
 class Incydent(models.Model):
     PRIORITY_CHOICES = [
-        ('niski', 'Niski'),
-        ('średni', 'Średni'),
-        ('wysoki', 'Wysoki'),
-        ('krytyczny', 'Krytyczny'),
+        ('low', 'Low'),
+        ('medium', 'Medium'),
+        ('high', 'High'),
+        ('critical', 'Critical'),
     ]
     TYPE_CHOICES = [
         ('Road Incident', 'Road Incident'),
@@ -34,7 +34,7 @@ class Incydent(models.Model):
     lat = models.DecimalField(max_digits=9, decimal_places=6)
     lng = models.DecimalField(max_digits=9, decimal_places=6)
     priorytet = models.CharField(max_length=10, choices=PRIORITY_CHOICES)
-    status = models.CharField(max_length=20, default='zgłoszony')
+    status = models.CharField(max_length=20, default='reported')
     zglaszajacy = models.ForeignKey(Uzytkownik, on_delete=models.CASCADE)
     data_zgloszenia = models.DateTimeField(auto_now_add=True)
     notatki = models.TextField(blank=True, default='')

@@ -32,9 +32,10 @@
 
 .low,
 .priority-low {
-    background: #f1f8e9;
-    color: #558b2f;
-    border: 1px solid #aed581;
+    /* Low priority - Blue */
+    background: #e3f2fd !important;
+    color: #1565c0 !important;
+    border: 1px solid #90caf9 !important;
 }
 
 .status-chip {

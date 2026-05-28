@@ -76,12 +76,12 @@
                     {% endif %}
                  </td>
                  <td style="padding: 12px;">
-                    <span class="status-chip {% if inc.status == 'zgłoszony' %}status-reported{% elif inc.status == 'w toku' %}status-in-progress{% elif inc.status == 'zakończony' %}status-closed{% else %}status-reported{% endif %}">
-                         {% if inc.status == 'zgłoszony' %}REPORTED
-                         {% elif inc.status == 'w toku' %}IN PROGRESS
-                         {% elif inc.status == 'zakończony' %}CLOSED
+                    <span class="status-chip {% if inc.status == 'reported' %}status-reported{% elif inc.status == 'in_progress' %}status-in-progress{% elif inc.status == 'closed' %}status-closed{% else %}status-reported{% endif %}">
+                         {% if inc.status == 'reported' %}REPORTED
+                         {% elif inc.status == 'in_progress' %}IN PROGRESS
+                         {% elif inc.status == 'closed' %}CLOSED
                          {% else %}{{ inc.status|upper }}{% endif %}
-                     </span>
+                    </span>
                  </td>
                  <td style="padding: 15px; font-family: monospace; font-size: 12px; color: #666;">
                     {{ inc.lat|floatformat:4 }}, {{ inc.lng|floatformat:4 }}

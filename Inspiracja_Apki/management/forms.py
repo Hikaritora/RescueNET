@@ -25,7 +25,8 @@ class IncydentForm(forms.ModelForm):
 
     class Meta:
         model = Incydent
-        fields = ['typ', 'lat', 'lng', 'priorytet', 'notatki']
+        # Order fields logically for the UI: type, priority, notes, then coordinates
+        fields = ['typ', 'priorytet', 'notatki', 'lat', 'lng']
         labels = {
             'lat': 'Latitude',
             'lng': 'Longitude',
