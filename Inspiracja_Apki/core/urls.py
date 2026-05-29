@@ -16,34 +16,36 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from management.views import lista_incydentow
-from management.views import nowy_incydent
-from management.views import lista_zasobow
-from management.views import przypisz_zasob
+from management.views import list_incidents
+from management.views import create_incident
+from management.views import list_resources
+from management.views import assign_resource
 from django.contrib.auth import views as auth_views
-from management.views import zakoncz_incydent
-from management.views import szczegoly_incydentu
+from management.views import close_incident
+from management.views import incident_detail
 from management.views import dashboard
-from management.views import archiwum_incydentow
-from management.views import eksportuj_raport
-from management.views import dodaj_zasob
-from management.views import usun_przypisanie_zasobu
-from management.views import usun_zasob
+from management.views import archive
+from management.views import export_report
+from management.views import add_resource
+from management.views import unassign_resource
+from management.views import delete_resource
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('incydenty/', lista_incydentow, name='lista_incydentow'), # Nowy adres 
-    path('nowy/', nowy_incydent, name='nowy_incydent'),
-    path('zasoby/', lista_zasobow, name='lista_zasobow'),
-    path('zasoby/assign/<int:zasob_id>/', przypisz_zasob, name='przypisz_zasob'),
+    path('incidents/', list_incidents, name='incident_list'),
+    path('incidents/create/', create_incident, name='create_incident'),
+    path('resources/', list_resources, name='resource_list'),
+    path('resources/assign/<int:zasob_id>/', assign_resource, name='assign_resource'),
     path('login/', auth_views.LoginView.as_view(template_name='management/login.html'), name='login'),
     path('logout/', auth_views.LogoutView.as_view(), name='logout'),
-    path('incydenty/<int:pk>/zakoncz/', zakoncz_incydent, name='zakoncz_incydent'),
-    path('incydenty/<int:pk>/', szczegoly_incydentu, name='szczegoly_incydentu'),
+    path('incidents/<int:pk>/close/', close_incident, name='close_incident'),
+    path('incidents/<int:pk>/', incident_detail, name='incident_detail'),
     path('', dashboard, name='dashboard'),
-    path('archiwum/', archiwum_incydentow, name='archiwum'),
-    path('archiwum/export/', eksportuj_raport, name='eksport_csv'),
-    path('zasob/dodaj/', dodaj_zasob, name='dodaj_zasob'),
-    path('zasob/usun/<int:zasob_id>/', usun_zasob, name='usun_zasob'),
-    path('incydenty/<int:pk>/usun-zasob/<int:zasob_id>/', usun_przypisanie_zasobu, name='usun_przypisanie_zasobu'),
+    path('archive/', archive, name='archive'),
+    path('archive/export/', export_report, name='export_csv'),
+    path('resource/add/', add_resource, name='add_resource'),
+    path('resource/delete/<int:zasob_id>/', delete_resource, name='delete_resource'),
+    path('incidents/<int:pk>/unassign-resource/<int:zasob_id>/', unassign_resource, name='unassign_resource'),
 ]
+
+

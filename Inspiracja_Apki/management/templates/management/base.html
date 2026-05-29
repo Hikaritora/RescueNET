@@ -58,18 +58,18 @@
     </a>
 
     {% if user.role == 'dispatcher' or user.is_superuser %}
-    <a href="{% url 'nowy_incydent' %}" class="nav-item {% if request.resolver_match.url_name == 'nowy_incydent' %}active{% endif %}" style="color: #ff5252; font-weight: bold;">
+    <a href="{% url 'create_incident' %}" class="nav-item {% if request.resolver_match.url_name == 'create_incident' %}active{% endif %}" style="color: #ff5252; font-weight: bold;">
         + New Incident
     </a>
     {% endif %}
 
-    <a href="{% url 'lista_incydentow' %}" class="nav-item {% if request.resolver_match.url_name == 'lista_incydentow' %}active{% endif %}">
+    <a href="{% url 'incident_list' %}" class="nav-item {% if request.resolver_match.url_name == 'incident_list' %}active{% endif %}">
         Incidents
     </a>
-    <a href="{% url 'lista_zasobow' %}" class="nav-item {% if request.resolver_match.url_name == 'lista_zasobow' %}active{% endif %}">
+    <a href="{% url 'resource_list' %}" class="nav-item {% if request.resolver_match.url_name == 'resource_list' %}active{% endif %}">
         Resources
     </a>
-    <a href="{% url 'archiwum' %}" class="nav-item {% if request.resolver_match.url_name == 'archiwum' %}active{% endif %}">
+    <a href="{% url 'archive' %}" class="nav-item {% if request.resolver_match.url_name == 'archive' %}active{% endif %}">
         Reports & Archive
     </a>
             <div style="margin-top: auto; padding: 30px 20px; border-top: 1px solid #333;">

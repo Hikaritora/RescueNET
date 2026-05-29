@@ -122,5 +122,6 @@ USE_TZ = True
 STATIC_URL = 'static/'
 LOGIN_URL = 'login'
 AUTH_USER_MODEL = 'management.Uzytkownik'
-LOGIN_REDIRECT_URL = 'lista_incydentow'
+# After renaming views/templates to English, update the default login redirect
+LOGIN_REDIRECT_URL = 'incident_list'
 LOGOUT_REDIRECT_URL = 'login'

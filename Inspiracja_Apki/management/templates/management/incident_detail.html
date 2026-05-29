@@ -3,12 +3,12 @@
 {% block content %}
 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
     <div>
-        <h2 style="margin: 0;">Incident Details: INC-00{{ incydent.id }}</h2>
-        <p style="color: #666; margin: 5px 0 0 0;">Reported by: {{ incydent.reporter.username }}</p>
+        <h2 style="margin: 0;">Incident Details: INC-00{{ incident.id }}</h2>
+        <p style="color: #666; margin: 5px 0 0 0;">Reported by: {{ incident.reporter.username }}</p>
     </div>
-    
-    {% if incydent.status != 'closed' %}
-    <form action="{% url 'zakoncz_incydent' incydent.id %}" method="post">
+
+    {% if incident.status != 'closed' %}
+    <form action="{% url 'close_incident' incident.id %}" method="post">
         {% csrf_token %}
         <button type="submit" style="background: #000; color: #fff; border: none; padding: 10px 20px; border-radius: 8px; font-weight: bold; cursor: pointer;">
             Finish Incident & Release Units
@@ -22,7 +22,7 @@
 </div>
 
 <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 25px;">
-    
+
     <div style="background: #fff; border-radius: 15px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); overflow: hidden; min-height: 500px;">
         <div id="map" style="width: 100%; height: 100%; min-height: 500px;"></div>
     </div>
@@ -31,19 +31,19 @@
         <div style="background: #fff; padding: 25px; border-radius: 15px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); min-height: 400px;">
             <h3 style="margin-top: 0; display: flex; justify-content: space-between; align-items: center;">
                 Deployed Units
-                <span style="background: #f4f7f6; padding: 2px 10px; border-radius: 10px; font-size: 12px;">{{ zasoby.count }}</span>
+                <span style="background: #f4f7f6; padding: 2px 10px; border-radius: 10px; font-size: 12px;">{{ resources.count }}</span>
             </h3>
             <hr style="border: 0; border-top: 1px solid #f4f7f6; margin: 15px 0;">
 
             <div style="display: flex; flex-direction: column; gap: 12px;">
-                {% for zasob in zasoby %}
-                <div style="padding: 15px; border: 1px solid #eee; border-radius: 10px; border-left: 5px solid {% if 'Fire' in zasob.type %}#d32f2f{% elif 'Police' in zasob.type %}#2196f3{% elif 'Ambulance' in zasob.type %}#fbc02d{% else %}#9e9e9e{% endif %}; background: #fafafa; display:flex; justify-content:space-between; align-items:center;">
+                {% for resource in resources %}
+                <div style="padding: 15px; border: 1px solid #eee; border-radius: 10px; border-left: 5px solid {% if 'Fire' in resource.type %}#d32f2f{% elif 'Police' in resource.type %}#2196f3{% elif 'Ambulance' in resource.type %}#fbc02d{% else %}#9e9e9e{% endif %}; background: #fafafa; display:flex; justify-content:space-between; align-items:center;">
     <div>
-        <strong style="display:block; color:#333;">{{ zasob.name }}</strong>
-        <small style="color:#666; text-transform: uppercase;">{{ zasob.type }}</small>
+        <strong style="display:block; color:#333;">{{ resource.name }}</strong>
+        <small style="color:#666; text-transform: uppercase;">{{ resource.type }}</small>
     </div>
-     {% if incydent.status != 'closed' %}
-     <form method="post" action="{% url 'usun_przypisanie_zasobu' incydent.id zasob.id %}" style="margin:0;">
+     {% if incident.status != 'closed' %}
+     <form method="post" action="{% url 'unassign_resource' incident.id resource.id %}" style="margin:0;">
         {% csrf_token %}
         <button type="submit" title="Remove unit"
             style="border:none; background:#fff; color:#d32f2f; font-weight:bold; cursor:pointer; width:28px; height:28px; border-radius:50%; box-shadow:0 1px 3px rgba(0,0,0,0.15);">
@@ -56,7 +56,7 @@
                 <div style="text-align: center; padding: 40px 20px; color: #bbb;">
                     <p style="font-size: 40px; margin: 0;">🚑</p>
                     <p style="font-style: italic;">No units assigned to this incident yet.</p>
-                    {% if incydent.status != 'closed' %}
+                    {% if incident.status != 'closed' %}
                     <small>Drag blue markers on the map to assign units.</small>
                     {% endif %}
                 </div>
@@ -72,51 +72,51 @@
     <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px;">
         <div>
             <label style="font-size: 11px; color: #aaa; text-transform: uppercase; font-weight: bold;">Incident Type</label>
-            <p style="margin: 5px 0; font-size: 18px;">{{ incydent.type }}</p>
+            <p style="margin: 5px 0; font-size: 18px;">{{ incident.type }}</p>
         </div>
         <div>
             <label style="font-size: 11px; color: #aaa; text-transform: uppercase; font-weight: bold;">Current Status</label>
             <p style="margin: 5px 0;">
-                <span class="status-chip {% if incydent.status == 'reported' %}status-reported{% elif incydent.status == 'in_progress' %}status-in-progress{% elif incydent.status == 'closed' %}status-closed{% else %}status-reported{% endif %}">
-                    {% if incydent.status == 'reported' %}REPORTED
-                    {% elif incydent.status == 'in_progress' %}IN PROGRESS
-                    {% elif incydent.status == 'closed' %}CLOSED
-                    {% else %}{{ incydent.status|upper }}{% endif %}
+                <span class="status-chip {% if incident.status == 'reported' %}status-reported{% elif incident.status == 'in_progress' %}status-in-progress{% elif incident.status == 'closed' %}status-closed{% else %}status-reported{% endif %}">
+                    {% if incident.status == 'reported' %}REPORTED
+                    {% elif incident.status == 'in_progress' %}IN PROGRESS
+                    {% elif incident.status == 'closed' %}CLOSED
+                    {% else %}{{ incident.status|upper }}{% endif %}
                 </span>
             </p>
         </div>
          <div>
              <label style="font-size: 11px; color: #aaa; text-transform: uppercase; font-weight: bold;">Reported By</label>
-             <p style="margin: 5px 0; font-size: 18px;">{{ incydent.reporter.username }}</p>
+             <p style="margin: 5px 0; font-size: 18px;">{{ incident.reporter.username }}</p>
          </div>
         <div>
             <label style="font-size: 11px; color: #aaa; text-transform: uppercase; font-weight: bold;">Priority</label>
             <p style="margin: 5px 0;">
-                {% if incydent.priority == 'critical' %}
+                {% if incident.priority == 'critical' %}
                     <span class="badge critical">Critical</span>
-                {% elif incydent.priority == 'high' %}
+                {% elif incident.priority == 'high' %}
                     <span class="badge high">High</span>
-                {% elif incydent.priority == 'medium' %}
+                {% elif incident.priority == 'medium' %}
                     <span class="badge medium">Medium</span>
-                {% elif incydent.priority == 'low' %}
+                {% elif incident.priority == 'low' %}
                     <span class="badge low">Low</span>
                 {% else %}
-                    <span class="badge">{{ incydent.priority }}</span>
+                    <span class="badge">{{ incident.priority }}</span>
                 {% endif %}
             </p>
         </div>
         <div>
             <label style="font-size: 11px; color: #aaa; text-transform: uppercase; font-weight: bold;">Date Reported</label>
-            <p style="margin: 5px 0; font-size: 16px; font-family: monospace;">{{ incydent.reported_at|date:"Y-m-d H:i" }}</p>
+            <p style="margin: 5px 0; font-size: 16px; font-family: monospace;">{{ incident.reported_at|date:"Y-m-d H:i" }}</p>
         </div>
         <div>
             <label style="font-size: 11px; color: #aaa; text-transform: uppercase; font-weight: bold;">Location</label>
-            <p style="margin: 5px 0; font-family: monospace; font-size: 14px;">{{ incydent.latitude }}, {{ incydent.longitude }}</p>
+            <p style="margin: 5px 0; font-family: monospace; font-size: 14px;">{{ incident.latitude }}, {{ incident.longitude }}</p>
         </div>
-        {% if incydent.notes %}
+        {% if incident.notes %}
         <div style="grid-column: 1 / -1;">
             <label style="font-size: 11px; color: #aaa; text-transform: uppercase; font-weight: bold;">Notes</label>
-            <p style="margin: 5px 0; font-size: 15px; color: #444; background: #f9f9f9; padding: 12px; border-radius: 8px; border-left: 3px solid #ddd;">{{ incydent.notes }}</p>
+            <p style="margin: 5px 0; font-size: 15px; color: #444; background: #f9f9f9; padding: 12px; border-radius: 8px; border-left: 3px solid #ddd;">{{ incident.notes }}</p>
         </div>
         {% endif %}
     </div>
@@ -124,12 +124,12 @@
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        var rawLat = "{{ incydent.latitude|default:'0' }}".replace(',', '.');
-        var rawLng = "{{ incydent.longitude|default:'0' }}".replace(',', '.');
+        var rawLat = "{{ incident.latitude|default:'0' }}".replace(',', '.');
+        var rawLng = "{{ incident.longitude|default:'0' }}".replace(',', '.');
 
         var incLat = parseFloat(rawLat);
         var incLng = parseFloat(rawLng);
-        
+
         if (isNaN(incLat) || incLat === 0) { incLat = 51.1079; }
         if (isNaN(incLng) || incLng === 0) { incLng = 17.0385; }
 
@@ -189,8 +189,8 @@ function iconForType(typeRaw) {
     return ICONS.DEFAULT;
 }
 
-        {% if incydent.status != 'closed' %}
-            {% for z in wolne_zasoby %}
+        {% if incident.status != 'closed' %}
+            {% for z in available_resources %}
                 {
                     let zName = "{{ z.name|escapejs }}";
                     let zType = "{{ z.type|escapejs }}";
@@ -214,7 +214,7 @@ function iconForType(typeRaw) {
 
                             if (distance < 500) {
                                 if (confirm("Assign " + zName + " to this incident?")) {
-                                    window.location.href = "/zasoby/assign/{{ z.id }}/?incydent_id={{ incydent.id }}";
+                                    window.location.href = "/resources/assign/{{ z.id }}/?incident_id={{ incident.id }}";
                                 } else {
                                     marker.setLatLng([marker.options.origLat, marker.options.origLng]);
                                 }
@@ -231,3 +231,4 @@ function iconForType(typeRaw) {
     });
 </script>
 {% endblock %}
+

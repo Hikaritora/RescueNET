@@ -6,7 +6,7 @@
         <h2 style="margin: 0;">Reports & Archive</h2>
         <p style="color: #666; margin: 5px 0 0 0;">Analytics and historical data</p>
     </div>
-    <a href="{% url 'eksport_csv' %}" style="background: #000; color: #fff; text-decoration: none; padding: 10px 20px; border-radius: 8px; font-weight: bold; font-size: 13px;">
+    <a href="{% url 'export_csv' %}" style="background: #000; color: #fff; text-decoration: none; padding: 10px 20px; border-radius: 8px; font-weight: bold; font-size: 13px;">
         📥 Download CSV
     </a>
 </div>
@@ -55,36 +55,36 @@
             </tr>
         </thead>
         <tbody>
-            {% for inc in incydenty %}
+            {% for incident in incidents %}
             <tr style="border-bottom: 1px solid #f9f9f9; font-size: 14px;">
-                <td style="padding: 15px; font-weight: bold;">INC-00{{ inc.id }}</td>
-                <td style="padding: 15px;">{{ inc.type }}</td>
+                <td style="padding: 15px; font-weight: bold;">INC-00{{ incident.id }}</td>
+                <td style="padding: 15px;">{{ incident.type }}</td>
                 <td style="padding: 15px; font-family: monospace; font-size: 12px; color: #666;">
-                    {{ inc.reported_at|date:"Y-m-d H:i" }}
+                    {{ incident.reported_at|date:"Y-m-d H:i" }}
                 </td>
                  <td style="padding: 15px;">
-                    {% if inc.priority == 'critical' %}
+                    {% if incident.priority == 'critical' %}
                         <span class="badge critical">Critical</span>
-                    {% elif inc.priority == 'high' %}
+                    {% elif incident.priority == 'high' %}
                         <span class="badge high">High</span>
-                    {% elif inc.priority == 'medium' %}
+                    {% elif incident.priority == 'medium' %}
                         <span class="badge medium">Medium</span>
-                    {% elif inc.priority == 'low' %}
+                    {% elif incident.priority == 'low' %}
                         <span class="badge low">Low</span>
                     {% else %}
-                        <span class="badge">{{ inc.priority|upper }}</span>
+                        <span class="badge">{{ incident.priority|upper }}</span>
                     {% endif %}
                   </td>
                  <td style="padding: 12px;">
-                    <span class="status-chip {% if inc.status == 'reported' %}status-reported{% elif inc.status == 'in_progress' %}status-in-progress{% elif inc.status == 'closed' %}status-closed{% else %}status-reported{% endif %}">
-                         {% if inc.status == 'reported' %}REPORTED
-                         {% elif inc.status == 'in_progress' %}IN PROGRESS
-                         {% elif inc.status == 'closed' %}CLOSED
-                         {% else %}{{ inc.status|upper }}{% endif %}
+                    <span class="status-chip {% if incident.status == 'reported' %}status-reported{% elif incident.status == 'in_progress' %}status-in-progress{% elif incident.status == 'closed' %}status-closed{% else %}status-reported{% endif %}">
+                         {% if incident.status == 'reported' %}REPORTED
+                         {% elif incident.status == 'in_progress' %}IN PROGRESS
+                         {% elif incident.status == 'closed' %}CLOSED
+                         {% else %}{{ incident.status|upper }}{% endif %}
                     </span>
                  </td>
                   <td style="padding: 15px; font-family: monospace; font-size: 12px; color: #666;">
-                     {{ inc.latitude|floatformat:4 }}, {{ inc.longitude|floatformat:4 }}
+                     {{ incident.latitude|floatformat:4 }}, {{ incident.longitude|floatformat:4 }}
                   </td>
             </tr>
             {% endfor %}
@@ -120,3 +120,4 @@
     });
 </script>
 {% endblock %}
+

@@ -8,155 +8,154 @@ from .models import Incydent, Zasob
 from .forms import IncydentForm, ZasobForm
 
 
+def is_dispatcher(user):
+    return user.role == 'dispatcher' or user.is_superuser
 
 
 
-def lista_incydentow(request):
+def list_incidents(request):
     filter_priority = request.GET.get('priority')
     filter_status = request.GET.get('status')
     filter_type = request.GET.get('type')
 
-    incydenty = Incydent.objects.all().order_by('-id')
+    incidents = Incydent.objects.all().order_by('-id')
 
     if filter_priority:
-        incydenty = incydenty.filter(priority=filter_priority)
+        incidents = incidents.filter(priority=filter_priority)
     if filter_status:
-        incydenty = incydenty.filter(status=filter_status)
+        incidents = incidents.filter(status=filter_status)
     if filter_type:
-        incydenty = incydenty.filter(type=filter_type)
+        incidents = incidents.filter(type=filter_type)
 
-    return render(request, 'management/incydenty.html', {
-        'incydenty': incydenty,
+    return render(request, 'management/incidents.html', {
+        'incidents': incidents,
         'selected_priority': filter_priority,
         'selected_status': filter_status,
         'selected_type': filter_type,
     })
 
 
-def czy_dyspozytor(user):
-    return user.role == 'dispatcher' or user.is_superuser
-
 @login_required
-@user_passes_test(czy_dyspozytor)
-def nowy_incydent(request):
+@user_passes_test(is_dispatcher)
+def create_incident(request):
     if request.method == "POST":
         form = IncydentForm(request.POST)
         if form.is_valid():
-            incydent = form.save(commit=False)
-            incydent.reporter = request.user
-            incydent.status = 'reported'
-            incydent.save()
-            return redirect('lista_incydentow')
+            incident = form.save(commit=False)
+            incident.reporter = request.user
+            incident.status = 'reported'
+            incident.save()
+            return redirect('incident_list')
     else:
         form = IncydentForm()
 
-    return render(request, 'management/nowy_incydent.html', {'form': form})
+    return render(request, 'management/create_incident.html', {'form': form})
 
 @login_required
-def lista_zasobow(request):
+def list_resources(request):
     filter_type = request.GET.get('type')
     filter_status = request.GET.get('status')
-    filter_specjalizacja = request.GET.get('specialization')
+    filter_specialization = request.GET.get('specialization')
 
-    zasoby = Zasob.objects.all().order_by('type', 'name')
+    resources = Zasob.objects.all().order_by('type', 'name')
 
     if filter_type:
-        zasoby = zasoby.filter(type=filter_type)
+        resources = resources.filter(type=filter_type)
     if filter_status:
-        zasoby = zasoby.filter(status=filter_status)
-    if filter_specjalizacja:
-        zasoby = zasoby.filter(specialization=filter_specjalizacja)
+        resources = resources.filter(status=filter_status)
+    if filter_specialization:
+        resources = resources.filter(specialization=filter_specialization)
 
     # Get unique values for filter dropdowns
     all_types = Zasob.objects.values_list('type', flat=True).distinct()
     all_statuses = Zasob.STATUS_CHOICES  # Use model choices directly
-    all_specjaliz = Zasob.objects.filter(specialization__gt='').values_list('specialization', flat=True).distinct()
+    all_specializations = Zasob.objects.filter(specialization__gt='').values_list('specialization', flat=True).distinct()
     # Always include "General" for empty/default specialization
-    all_specjaliz = set(all_specjaliz)
-    all_specjaliz.add('General')
+    all_specializations = set(all_specializations)
+    all_specializations.add('General')
 
-    return render(request, 'management/zasoby.html', {
-        'zasoby': zasoby,
+    return render(request, 'management/resources.html', {
+        'resources': resources,
         'selected_type': filter_type,
         'selected_status': filter_status,
-        'selected_specialization': filter_specjalizacja,
+        'selected_specialization': filter_specialization,
         'all_types': all_types,
         'all_statuses': all_statuses,
-        'all_specjaliz': all_specjaliz,
+        'all_specializations': all_specializations,
     })
 
 @login_required
-def przypisz_zasob(request, zasob_id):
-    zasob = get_object_or_404(Zasob, id=zasob_id)
-    inc_id = request.GET.get('incydent_id')
+def assign_resource(request, zasob_id):
+    resource = get_object_or_404(Zasob, id=zasob_id)
+    incident_id = request.GET.get('incident_id')
 
-    if inc_id:
-        incydent = get_object_or_404(Incydent, id=inc_id)
+    if incident_id:
+        incident = get_object_or_404(Incydent, id=incident_id)
 
-        if incydent.status == 'closed':
-            return redirect('szczegoly_incydentu', pk=inc_id)
+        if incident.status == 'closed':
+            return redirect('incident_detail', pk=incident_id)
 
         # Assign resource to incident using new FK
-        zasob.assigned_to = incydent
-        zasob.status = 'assigned'
-        zasob.save()
+        resource.assigned_to = incident
+        resource.status = 'assigned'
+        resource.save()
 
         # Update incident status to in_progress
-        incydent.status = 'in_progress'
-        incydent.save()
+        incident.status = 'in_progress'
+        incident.save()
 
-        return redirect('szczegoly_incydentu', pk=inc_id)
+        return redirect('incident_detail', pk=incident_id)
 
-    return redirect('lista_incydentow')
+    return redirect('incident_list')
 
 
 
 @login_required
-def usun_przypisanie_zasobu(request, pk, zasob_id):
-    incydent = get_object_or_404(Incydent, pk=pk)
-    zasob = get_object_or_404(Zasob, pk=zasob_id)
+def unassign_resource(request, pk, zasob_id):
+    incident = get_object_or_404(Incydent, pk=pk)
+    resource = get_object_or_404(Zasob, pk=zasob_id)
 
     # Make sure resource is assigned to this incident before releasing
-    if zasob.assigned_to_id == incydent.id:
-        zasob.assigned_to = None
-        zasob.status = 'available'
-        zasob.save()
+    if resource.assigned_to_id == incident.id:
+        resource.assigned_to = None
+        resource.status = 'available'
+        resource.save()
 
     # Optional: if no resources remain assigned and incident isn't closed, set back to "reported"
-    assigned_left = Zasob.objects.filter(assigned_to=incydent).exists()
-    if not assigned_left and incydent.status != 'closed':
-        incydent.status = 'reported'
-        incydent.save()
+    assigned_left = Zasob.objects.filter(assigned_to=incident).exists()
+    if not assigned_left and incident.status != 'closed':
+        incident.status = 'reported'
+        incident.save()
 
-    return redirect('szczegoly_incydentu', pk=pk)
+    return redirect('incident_detail', pk=pk)
 
 
 @login_required
-def zakoncz_incydent(request, pk):
-    incydent = get_object_or_404(Incydent, pk=pk)
-    incydent.status = 'closed'
-    incydent.save()
+def close_incident(request, pk):
+    incident = get_object_or_404(Incydent, pk=pk)
+    incident.status = 'closed'
+    incident.save()
 
     # Release all resources assigned to this incident
-    Zasob.objects.filter(assigned_to=incydent).update(
+    Zasob.objects.filter(assigned_to=incident).update(
         assigned_to=None,
         status='available'
     )
 
-    return redirect('szczegoly_incydentu', pk=pk)
+    return redirect('incident_detail', pk=pk)
 
 @login_required
-def szczegoly_incydentu(request, pk):
-    incydent = get_object_or_404(Incydent, pk=pk)
+def incident_detail(request, pk):
+    incident = get_object_or_404(Incydent, pk=pk)
     # Get resources assigned to this incident via FK
-    przypisane_zasoby = Zasob.objects.filter(assigned_to=incydent)
+    assigned_resources = Zasob.objects.filter(assigned_to=incident)
     # Get available resources (not assigned to any incident)
-    wolne_zasoby = Zasob.objects.filter(status='available')
+    available_resources = Zasob.objects.filter(status='available')
 
-    return render(request, 'management/incydent_detale.html', {
-        'incydent': incydent,
-        'zasoby': przypisane_zasoby,
-        'wolne_zasoby': wolne_zasoby
+    return render(request, 'management/incident_detail.html', {
+        'incident': incident,
+        'resources': assigned_resources,
+        'available_resources': available_resources
     })
 
 
@@ -176,7 +175,7 @@ def dashboard(request):
 
 
 @login_required
-def archiwum_incydentow(request):
+def archive(request):
     total = Incydent.objects.count()
     active = Incydent.objects.exclude(status='closed').count()
     resolved = Incydent.objects.filter(status='closed').count()
@@ -188,48 +187,48 @@ def archiwum_incydentow(request):
     in_use = Zasob.objects.exclude(status='available').count()
     available = Zasob.objects.filter(status='available').count()
 
-    archiwalne = Incydent.objects.all().order_by('-id')
+    archived_incidents = Incydent.objects.all().order_by('-id')
 
-    return render(request, 'management/archiwum.html', {
+    return render(request, 'management/archive.html', {
         'total': total,
         'active': active,
         'resolved': resolved,
         'type_labels': type_labels,
         'type_counts': type_counts,
         'resource_stats': [in_use, available],
-        'incydenty': archiwalne
+        'incidents': archived_incidents
     })
 
 @login_required
-def eksportuj_raport(request):
+def export_report(request):
     response = HttpResponse(content_type='text/csv')
-    response['Content-Disposition'] = 'attachment; filename="raport_rescuenet.csv"'
+    response['Content-Disposition'] = 'attachment; filename="rescuenet_report.csv"'
 
     writer = csv.writer(response)
     writer.writerow(['ID', 'Type', 'Priority', 'Status', 'Latitude', 'Longitude', 'Date Reported'])
 
-    incydenty = Incydent.objects.all()
-    for inc in incydenty:
-        writer.writerow([inc.id, inc.type, inc.priority, inc.status, inc.latitude, inc.longitude, inc.reported_at])
+    incidents = Incydent.objects.all()
+    for incident in incidents:
+        writer.writerow([incident.id, incident.type, incident.priority, incident.status, incident.latitude, incident.longitude, incident.reported_at])
 
     return response
 
 @login_required
-def usun_zasob(request, zasob_id):
+def delete_resource(request, zasob_id):
     if request.user.role != 'admin' and not request.user.is_superuser:
-        return redirect('lista_zasobow')
+        return redirect('resource_list')
 
-    zasob = get_object_or_404(Zasob, id=zasob_id)
+    resource = get_object_or_404(Zasob, id=zasob_id)
 
     if request.method == 'POST':
-        zasob.delete()
+        resource.delete()
 
-    return redirect('lista_zasobow')
+    return redirect('resource_list')
 
 
 @login_required
-def dodaj_zasob(request):
-    
+def add_resource(request):
+
     if request.user.role != 'admin' and not request.user.is_superuser:
         return redirect('dashboard')
 
@@ -240,8 +239,8 @@ def dodaj_zasob(request):
                 form.add_error('name', 'A resource with this name already exists.')
             else:
                 form.save()
-                return redirect('lista_zasobow')
+                return redirect('resource_list')
     else:
         form = ZasobForm() 
 
-    return render(request, 'management/dodaj_zasob.html', {'form': form})
+    return render(request, 'management/add_resource.html', {'form': form})

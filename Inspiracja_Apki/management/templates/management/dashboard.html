@@ -36,33 +36,33 @@
             </tr>
         </thead>
         <tbody>
-            {% for inc in recent_incidents %}
+            {% for incident in recent_incidents %}
             <tr style="border-bottom: 1px solid #f9f9f9;">
-                <td style="padding: 12px; font-weight: bold;">INC-00{{ inc.id }}</td>
-                <td style="padding: 12px;">{{ inc.typ }}</td>
+                <td style="padding: 12px; font-weight: bold;">INC-00{{ incident.id }}</td>
+                <td style="padding: 12px;">{{ incident.type }}</td>
                 <td style="padding: 12px;">
-                    {% if inc.priority == 'critical' %}
+                    {% if incident.priority == 'critical' %}
                         <span class="badge critical">Critical</span>
-                    {% elif inc.priority == 'high' %}
+                    {% elif incident.priority == 'high' %}
                         <span class="badge high">High</span>
-                    {% elif inc.priority == 'medium' %}
+                    {% elif incident.priority == 'medium' %}
                         <span class="badge medium">Medium</span>
-                    {% elif inc.priority == 'low' %}
+                    {% elif incident.priority == 'low' %}
                         <span class="badge low">Low</span>
                     {% else %}
-                        <span class="badge">{{ inc.priority }}</span>
+                        <span class="badge">{{ incident.priority }}</span>
                     {% endif %}
                 </td>
                 <td style="padding: 12px;">
-                    <span class="status-chip {% if inc.status == 'reported' %}status-reported{% elif inc.status == 'in_progress' %}status-in-progress{% elif inc.status == 'closed' %}status-closed{% else %}status-reported{% endif %}">
-                        {% if inc.status == 'reported' %}REPORTED
-                        {% elif inc.status == 'in_progress' %}IN PROGRESS
-                        {% elif inc.status == 'closed' %}CLOSED
-                        {% else %}{{ inc.status|upper }}{% endif %}
+                    <span class="status-chip {% if incident.status == 'reported' %}status-reported{% elif incident.status == 'in_progress' %}status-in-progress{% elif incident.status == 'closed' %}status-closed{% else %}status-reported{% endif %}">
+                        {% if incident.status == 'reported' %}REPORTED
+                        {% elif incident.status == 'in_progress' %}IN PROGRESS
+                        {% elif incident.status == 'closed' %}CLOSED
+                        {% else %}{{ incident.status|upper }}{% endif %}
                     </span>
                 </td>
                 <td style="padding: 12px;">
-                    <a href="{% url 'szczegoly_incydentu' inc.id %}" style="color: #d32f2f; text-decoration: none; font-size: 13px; font-weight: bold;">View Details →</a>
+                    <a href="{% url 'incident_detail' incident.id %}" style="color: #d32f2f; text-decoration: none; font-size: 13px; font-weight: bold;">View Details →</a>
                 </td>
             </tr>
             {% endfor %}

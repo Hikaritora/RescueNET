@@ -7,7 +7,7 @@ class Uzytkownik(AbstractUser):
         ('rescuer', 'Rescuer'),
         ('admin', 'Administrator'),
     ]
-    role = models.CharField(max_length=20, choices=ROLE_CHOICES)
+    role = models.CharField(max_length=20, choices=ROLE_CHOICES, default='rescuer')
 
 class Incydent(models.Model):
     PRIORITY_CHOICES = [
