@@ -1,8 +1,8 @@
 from django import forms
-from .models import Incydent, Zasob
+from .models import Incident, Resource
 
 
-class IncydentForm(forms.ModelForm):
+class IncidentForm(forms.ModelForm):
 
     PRIORITY_CHOICES_EN = [
         ('low', 'Low'),
@@ -19,13 +19,13 @@ class IncydentForm(forms.ModelForm):
     )
 
     type = forms.ChoiceField(
-        choices=Incydent.TYPE_CHOICES,
+        choices=Incident.TYPE_CHOICES,
         label='Type',
         widget=forms.Select(attrs={'class': 'form-control'})
     )
 
     class Meta:
-        model = Incydent
+        model = Incident
         # Order fields logically for the UI: type, priority, notes, then coordinates
         fields = ['type', 'priority', 'notes', 'latitude', 'longitude']
         labels = {
@@ -40,7 +40,7 @@ class IncydentForm(forms.ModelForm):
         }
 
 
-class ZasobForm(forms.ModelForm):
+class ResourceForm(forms.ModelForm):
 
     TYPE_CHOICES = [
         ('Ambulance', 'Ambulance'),
@@ -58,7 +58,7 @@ class ZasobForm(forms.ModelForm):
     )
 
     class Meta:
-        model = Zasob
+        model = Resource
         # Exclude status and assigned_to; those are managed by assignment logic
         fields = ['name', 'type', 'specialization', 'latitude', 'longitude']
         labels = {

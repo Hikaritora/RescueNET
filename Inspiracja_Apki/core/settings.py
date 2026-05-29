@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-7@r@(n7q_9y)fkbybd*!@)h%jeai$c!kn=)=avr7siip*#6otr
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'testserver']
 
 
 # Application definition
@@ -121,7 +121,7 @@ USE_TZ = True
 
 STATIC_URL = 'static/'
 LOGIN_URL = 'login'
-AUTH_USER_MODEL = 'management.Uzytkownik'
+AUTH_USER_MODEL = 'management.User'
 # After renaming views/templates to English, update the default login redirect
 LOGIN_REDIRECT_URL = 'incident_list'
 LOGOUT_REDIRECT_URL = 'login'

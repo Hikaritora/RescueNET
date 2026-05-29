@@ -1,7 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 
-class Uzytkownik(AbstractUser):
+class User(AbstractUser):
     ROLE_CHOICES = [
         ('dispatcher', 'Dispatcher'),
         ('rescuer', 'Rescuer'),
@@ -9,7 +9,13 @@ class Uzytkownik(AbstractUser):
     ]
     role = models.CharField(max_length=20, choices=ROLE_CHOICES, default='rescuer')
 
-class Incydent(models.Model):
+    class Meta:
+        db_table = 'management_user'
+
+    def __str__(self):
+        return f"{self.get_full_name() or self.username} ({self.role})"
+
+class Incident(models.Model):
     PRIORITY_CHOICES = [
         ('low', 'Low'),
         ('medium', 'Medium'),
@@ -35,19 +41,27 @@ class Incydent(models.Model):
     longitude = models.DecimalField(max_digits=9, decimal_places=6)
     priority = models.CharField(max_length=10, choices=PRIORITY_CHOICES)
     status = models.CharField(max_length=20, default='reported')
-    reporter = models.ForeignKey(Uzytkownik, on_delete=models.CASCADE)
+    reporter = models.ForeignKey(User, on_delete=models.CASCADE)
     reported_at = models.DateTimeField(auto_now_add=True)
     notes = models.TextField(blank=True, default='')
 
+    class Meta:
+        db_table = 'management_incident'
+        indexes = [
+            models.Index(fields=['status'], name='management_incident_status_idx'),
+        ]
 
-class Zasob(models.Model):
+    def __str__(self):
+        return f"Incident #{self.id} - {self.type}"
+
+
+class Resource(models.Model):
     STATUS_CHOICES = [
         ('available', 'Available'),
         ('assigned', 'Assigned'),
         ('unavailable', 'Unavailable'),
     ]
 
-    id = models.AutoField(primary_key=True, db_column='id_zasobu')
     name = models.CharField(max_length=100, unique=True)
     type = models.CharField(max_length=50)
     specialization = models.CharField(max_length=100, blank=True)
@@ -57,7 +71,7 @@ class Zasob(models.Model):
         default='available'
     )
     assigned_to = models.ForeignKey(
-        Incydent,
+        Incident,
         on_delete=models.SET_NULL,
         null=True,
         blank=True,
@@ -67,9 +81,9 @@ class Zasob(models.Model):
     longitude = models.FloatField(default=17.0385)
 
     class Meta:
-        db_table = 'zasob'
+        db_table = 'management_resource'
         indexes = [
-            models.Index(fields=['status'], name='management_zasob_status_idx'),
+            models.Index(fields=['status'], name='management_resource_status_idx'),
         ]
 
     def __str__(self):

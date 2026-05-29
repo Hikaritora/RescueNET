@@ -1,7 +1,7 @@
 from django.contrib import admin
 
-from .models import Uzytkownik, Incydent, Zasob
+from .models import User, Incident, Resource
 
-admin.site.register(Uzytkownik)
-admin.site.register(Incydent)
-admin.site.register(Zasob)
+admin.site.register(User)
+admin.site.register(Incident)
+admin.site.register(Resource)

@@ -36,7 +36,7 @@
 
 18. ~~18. naprawic dodawanie 2 zasobow o tej samej nazwie~~
 
-18. przepisać na angielski
+~~18. przepisać na angielski~~
 
 19. OPCJONALNIE: dodatkowe typu userów (policja, strażacy) i system przypisywania użytkowników do zdarzeń
 
