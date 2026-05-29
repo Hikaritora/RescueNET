@@ -92,13 +92,13 @@
         <div>
             <label style="font-size: 11px; color: #aaa; text-transform: uppercase; font-weight: bold;">Priority</label>
             <p style="margin: 5px 0;">
-                {% if incydent.priorytet == 'krytyczny' %}
+                {% if incydent.priorytet == 'critical' %}
                     <span class="badge critical">Critical</span>
-                {% elif incydent.priorytet == 'wysoki' %}
+                {% elif incydent.priorytet == 'high' %}
                     <span class="badge high">High</span>
-                {% elif incydent.priorytet == 'średni' %}
+                {% elif incydent.priorytet == 'medium' %}
                     <span class="badge medium">Medium</span>
-                {% elif incydent.priorytet == 'niski' %}
+                {% elif incydent.priorytet == 'low' %}
                     <span class="badge low">Low</span>
                 {% else %}
                     <span class="badge">{{ incydent.priorytet }}</span>

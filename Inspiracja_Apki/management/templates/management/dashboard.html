@@ -41,13 +41,13 @@
                 <td style="padding: 12px; font-weight: bold;">INC-00{{ inc.id }}</td>
                 <td style="padding: 12px;">{{ inc.typ }}</td>
                 <td style="padding: 12px;">
-                    {% if inc.priorytet == 'krytyczny' %}
+                    {% if inc.priorytet == 'critical' %}
                         <span class="badge critical">Critical</span>
-                    {% elif inc.priorytet == 'wysoki' %}
+                    {% elif inc.priorytet == 'high' %}
                         <span class="badge high">High</span>
-                    {% elif inc.priorytet == 'średni' %}
+                    {% elif inc.priorytet == 'medium' %}
                         <span class="badge medium">Medium</span>
-                    {% elif inc.priorytet == 'niski' %}
+                    {% elif inc.priorytet == 'low' %}
                         <span class="badge low">Low</span>
                     {% else %}
                         <span class="badge">{{ inc.priorytet }}</span>

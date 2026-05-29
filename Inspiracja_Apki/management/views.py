@@ -56,7 +56,6 @@ def nowy_incydent(request):
 def lista_zasobow(request):
     filter_type = request.GET.get('type')
     filter_status = request.GET.get('status')
-    filter_dostepnosc = request.GET.get('dostepnosc')
     filter_specjalizacja = request.GET.get('specjalizacja')
 
     zasoby = Zasob.objects.all().order_by('typ', 'nazwa')
@@ -65,15 +64,12 @@ def lista_zasobow(request):
         zasoby = zasoby.filter(typ=filter_type)
     if filter_status:
         zasoby = zasoby.filter(status=filter_status)
-    if filter_dostepnosc:
-        is_available = filter_dostepnosc == 'available'
-        zasoby = zasoby.filter(dostepnosc=is_available)
     if filter_specjalizacja:
         zasoby = zasoby.filter(specjalizacja=filter_specjalizacja)
 
     # Get unique values for filter dropdowns
     all_types = Zasob.objects.values_list('typ', flat=True).distinct()
-    all_statuses = Zasob.objects.values_list('status', flat=True).distinct()
+    all_statuses = Zasob.STATUS_CHOICES  # Use model choices directly
     all_specjaliz = Zasob.objects.filter(specjalizacja__gt='').values_list('specjalizacja', flat=True).distinct()
     # Always include "General" for empty/default specialization
     all_specjaliz = set(all_specjaliz)
@@ -83,7 +79,6 @@ def lista_zasobow(request):
         'zasoby': zasoby,
         'selected_type': filter_type,
         'selected_status': filter_status,
-        'selected_dostepnosc': filter_dostepnosc,
         'selected_specjalizacja': filter_specjalizacja,
         'all_types': all_types,
         'all_statuses': all_statuses,
@@ -101,9 +96,12 @@ def przypisz_zasob(request, zasob_id):
         if incydent.status == 'closed':
             return redirect('szczegoly_incydentu', pk=inc_id)
 
-        zasob.dostepnosc = False
-        zasob.status = f"Assigned to INC-{incydent.id}"
+        # Assign resource to incident using new FK
+        zasob.assigned_to = incydent
+        zasob.status = 'assigned'
         zasob.save()
+
+        # Update incident status to in_progress
         incydent.status = 'in_progress'
         incydent.save()
 
@@ -119,18 +117,18 @@ def usun_przypisanie_zasobu(request, pk, zasob_id):
     zasob = get_object_or_404(Zasob, pk=zasob_id)
 
     # Make sure resource is assigned to this incident before releasing
-    if f"INC-{incydent.id}" in (zasob.status or ""):
-        zasob.dostepnosc = True
-        zasob.status = "Available"
+    if zasob.assigned_to_id == incydent.id:
+        zasob.assigned_to = None
+        zasob.status = 'available'
         zasob.save()
 
-    # Optional: if no resources remain assigned and incident isn't closed, set back to "zgłoszony"
-    assigned_left = Zasob.objects.filter(status__icontains=f"INC-{incydent.id}").exists()
-    if not assigned_left and incydent.status != "closed":
-        incydent.status = "reported"
+    # Optional: if no resources remain assigned and incident isn't closed, set back to "reported"
+    assigned_left = Zasob.objects.filter(assigned_to=incydent).exists()
+    if not assigned_left and incydent.status != 'closed':
+        incydent.status = 'reported'
         incydent.save()
 
-    return redirect("szczegoly_incydentu", pk=pk)
+    return redirect('szczegoly_incydentu', pk=pk)
 
 
 @login_required
@@ -139,9 +137,10 @@ def zakoncz_incydent(request, pk):
     incydent.status = 'closed'
     incydent.save()
 
-    Zasob.objects.filter(status__icontains=f"INC-{incydent.id}").update(
-        dostepnosc=True,
-        status='Available'
+    # Release all resources assigned to this incident
+    Zasob.objects.filter(assigned_to=incydent).update(
+        assigned_to=None,
+        status='available'
     )
 
     return redirect('szczegoly_incydentu', pk=pk)
@@ -149,8 +148,10 @@ def zakoncz_incydent(request, pk):
 @login_required
 def szczegoly_incydentu(request, pk):
     incydent = get_object_or_404(Incydent, pk=pk)
-    przypisane_zasoby = Zasob.objects.filter(status__icontains=f"INC-{incydent.id}")
-    wolne_zasoby = Zasob.objects.filter(dostepnosc=True)
+    # Get resources assigned to this incident via FK
+    przypisane_zasoby = Zasob.objects.filter(assigned_to=incydent)
+    # Get available resources (not assigned to any incident)
+    wolne_zasoby = Zasob.objects.filter(status='available')
 
     return render(request, 'management/incydent_detale.html', {
         'incydent': incydent,
@@ -162,8 +163,8 @@ def szczegoly_incydentu(request, pk):
 @login_required
 def dashboard(request):
     total_incidents = Incydent.objects.count()
-    active_incidents = Incydent.objects.exclude(status='closed').filter(status__in=['reported', 'in_progress', 'w toku', 'zgłoszony', 'In progress']).count()
-    available_resources = Zasob.objects.filter(dostepnosc=True).count()
+    active_incidents = Incydent.objects.exclude(status='closed').count()
+    available_resources = Zasob.objects.filter(status='available').count()
     recent_incidents = Incydent.objects.all().order_by('-id')[:5]
 
     return render(request, 'management/dashboard.html', {
@@ -177,15 +178,15 @@ def dashboard(request):
 @login_required
 def archiwum_incydentow(request):
     total = Incydent.objects.count()
-    active = Incydent.objects.exclude(status='closed').filter(status__in=['reported', 'in_progress', 'w toku', 'zgłoszony', 'In progress']).count()
+    active = Incydent.objects.exclude(status='closed').count()
     resolved = Incydent.objects.filter(status='closed').count()
 
     type_data = Incydent.objects.values('typ').annotate(count=Count('id'))
     type_labels = [item['typ'] for item in type_data]
     type_counts = [item['count'] for item in type_data]
 
-    in_use = Zasob.objects.filter(dostepnosc=False).count()
-    available = Zasob.objects.filter(dostepnosc=True).count()
+    in_use = Zasob.objects.exclude(status='available').count()
+    available = Zasob.objects.filter(status='available').count()
 
     archiwalne = Incydent.objects.all().order_by('-id')
 

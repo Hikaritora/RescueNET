@@ -23,10 +23,11 @@
             {% endfor %}
         </select>
 
-        <select name="dostepnosc" onchange="this.form.submit()" style="padding: 10px; border-radius: 6px; border: 1px solid #ddd; min-width: 150px;">
+        <select name="status" onchange="this.form.submit()" style="padding: 10px; border-radius: 6px; border: 1px solid #ddd; min-width: 150px;">
             <option value="">All Status</option>
-            <option value="available" {% if selected_dostepnosc == 'available' %}selected{% endif %}>Available</option>
-            <option value="busy" {% if selected_dostepnosc == 'busy' %}selected{% endif %}>Busy</option>
+            {% for value, label in all_statuses %}
+            <option value="{{ value }}" {% if selected_status == value %}selected{% endif %}>{{ label }}</option>
+            {% endfor %}
         </select>
 
         <select name="specjalizacja" onchange="this.form.submit()" style="padding: 10px; border-radius: 6px; border: 1px solid #ddd; min-width: 200px;">
@@ -48,35 +49,37 @@
                 <h3 style="margin: 0; color: #333;">{{ zasob.nazwa }}</h3>
                 <span style="font-size: 12px; color: #666; text-transform: uppercase;">{{ zasob.typ }}</span>
             </div>
-            <span class="resource-availability {% if zasob.dostepnosc %}available{% else %}busy{% endif %}">
-                 {% if zasob.dostepnosc %}AVAILABLE{% else %}BUSY{% endif %}
-             </span>
+             <span class="resource-availability {% if zasob.status == 'available' %}available{% else %}busy{% endif %}">
+                  {% if zasob.status == 'available' %}AVAILABLE{% else %}BUSY{% endif %}
+              </span>
          </div>
 
          <div style="margin-top: 15px; font-size: 14px; color: #555;">
              <strong>Specialization:</strong> {{ zasob.specjalizacja|default:"General" }}<br>
-             <strong>Current Status:</strong>
-             {% if zasob.status == 'Available' %}
-                 <span class="status-chip status-closed">AVAILABLE</span>
-             {% elif 'INC-' in zasob.status %}
-                 <span class="status-chip status-in-progress">IN PROGRESS</span>
-             {% else %}
-                 <span class="status-chip status-reported">{{ zasob.status|upper }}</span>
-             {% endif %}<br>
+              <strong>Current Status:</strong>
+              {% if zasob.status == 'available' %}
+                  <span class="status-chip status-closed">AVAILABLE</span>
+              {% elif zasob.status == 'assigned' %}
+                  <span class="status-chip status-in-progress">ASSIGNED{% if zasob.assigned_to %} to INC-{{ zasob.assigned_to.id }}{% endif %}</span>
+              {% elif zasob.status == 'unavailable' %}
+                  <span class="status-chip status-reported">UNAVAILABLE</span>
+              {% else %}
+                  <span class="status-chip status-reported">{{ zasob.status|upper }}</span>
+              {% endif %}<br>
              <strong>Location:</strong>
              <span style="font-family: monospace; font-size: 13px;">{{ zasob.lat|floatformat:4 }}, {{ zasob.lng|floatformat:4 }}</span>
          </div>
 
-         {% if request.user.rola == 'admin' or request.user.is_superuser %}
-         {% if zasob.dostepnosc %}
-         <form method="POST" action="{% url 'usun_zasob' zasob.id %}" style="margin-top: 15px;" onsubmit="return confirm('Delete {{ zasob.nazwa }}? This cannot be undone.');">
-             {% csrf_token %}
-             <button type="submit" style="background: none; border: 1px solid #d32f2f; color: #d32f2f; padding: 6px 14px; border-radius: 6px; cursor: pointer; font-size: 12px; font-weight: bold;">
-                 Delete
-             </button>
-         </form>
-         {% endif %}
-         {% endif %}
+          {% if request.user.rola == 'admin' or request.user.is_superuser %}
+          {% if zasob.status == 'available' %}
+          <form method="POST" action="{% url 'usun_zasob' zasob.id %}" style="margin-top: 15px;" onsubmit="return confirm('Delete {{ zasob.nazwa }}? This cannot be undone.');">
+              {% csrf_token %}
+              <button type="submit" style="background: none; border: 1px solid #d32f2f; color: #d32f2f; padding: 6px 14px; border-radius: 6px; cursor: pointer; font-size: 12px; font-weight: bold;">
+                  Delete
+              </button>
+          </form>
+          {% endif %}
+          {% endif %}
      </div>
      {% endfor %}
 </div>

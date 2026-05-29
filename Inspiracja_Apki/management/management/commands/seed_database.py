@@ -157,8 +157,8 @@ class Command(BaseCommand):
                 ]),
                 lat=round(random.uniform(LAT_MIN, LAT_MAX), 6),
                 lng=round(random.uniform(LNG_MIN, LNG_MAX), 6),
-                priorytet=random.choice(['niski', 'średni', 'wysoki', 'krytyczny']),
-                status=random.choice(['zgłoszony', 'w toku', 'zakończony']),
+                priorytet=random.choice(['low', 'medium', 'high', 'critical']),
+                status=random.choice(['reported', 'in_progress', 'closed']),
                 zglaszajacy=reporter,
                 data_zgloszenia=timezone.now() - timedelta(days=random.randint(0, 30)),
                 notatki=''

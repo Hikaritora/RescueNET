@@ -32,17 +32,17 @@
 
         <select name="status" onchange="this.form.submit()" style="padding: 10px; border-radius: 6px; border: 1px solid #ddd; min-width: 150px;">
             <option value="">All Statuses</option>
-            <option value="zgłoszony" {% if selected_status == 'zgłoszony' %}selected{% endif %}>Reported</option>
-            <option value="w toku" {% if selected_status == 'w toku' %}selected{% endif %}>In Progress</option>
-            <option value="zakończony" {% if selected_status == 'zakończony' %}selected{% endif %}>Closed</option>
+            <option value="reported" {% if selected_status == 'reported' %}selected{% endif %}>Reported</option>
+            <option value="in_progress" {% if selected_status == 'in_progress' %}selected{% endif %}>In Progress</option>
+            <option value="closed" {% if selected_status == 'closed' %}selected{% endif %}>Closed</option>
         </select>
 
         <select name="priority" onchange="this.form.submit()" style="padding: 10px; border-radius: 6px; border: 1px solid #ddd; min-width: 150px;">
             <option value="">All Priorities</option>
-            <option value="krytyczny" {% if selected_priority == 'krytyczny' %}selected{% endif %}>Critical</option>
-            <option value="wysoki" {% if selected_priority == 'wysoki' %}selected{% endif %}>High</option>
-            <option value="średni" {% if selected_priority == 'średni' %}selected{% endif %}>Medium</option>
-            <option value="niski" {% if selected_priority == 'niski' %}selected{% endif %}>Low</option>
+            <option value="critical" {% if selected_priority == 'critical' %}selected{% endif %}>Critical</option>
+            <option value="high" {% if selected_priority == 'high' %}selected{% endif %}>High</option>
+            <option value="medium" {% if selected_priority == 'medium' %}selected{% endif %}>Medium</option>
+            <option value="low" {% if selected_priority == 'low' %}selected{% endif %}>Low</option>
         </select>
 
         <a href="{% url 'lista_incydentow' %}" style="color: #666; text-decoration: none; font-size: 14px;">Reset Filters</a>
@@ -73,13 +73,13 @@
                     {{ incydent.data_zgloszenia|date:"Y-m-d H:i" }}
                 </td>
                 <td style="padding: 15px;">
-                    {% if incydent.priorytet == 'krytyczny' %}
+                    {% if incydent.priorytet == 'critical' %}
                         <span class="badge critical">Critical</span>
-                    {% elif incydent.priorytet == 'wysoki' %}
+                    {% elif incydent.priorytet == 'high' %}
                         <span class="badge high">High</span>
-                    {% elif incydent.priorytet == 'średni' %}
+                    {% elif incydent.priorytet == 'medium' %}
                         <span class="badge medium">Medium</span>
-                    {% elif incydent.priorytet == 'niski' %}
+                    {% elif incydent.priorytet == 'low' %}
                         <span class="badge low">Low</span>
                     {% else %}
                         <span class="badge">{{ incydent.priorytet }}</span>

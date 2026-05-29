@@ -41,17 +41,36 @@ class Incydent(models.Model):
 
 
 class Zasob(models.Model):
+    STATUS_CHOICES = [
+        ('available', 'Available'),
+        ('assigned', 'Assigned'),
+        ('unavailable', 'Unavailable'),
+    ]
+
     id = models.AutoField(primary_key=True, db_column='id_zasobu')
-    nazwa = models.CharField(max_length=100)
+    nazwa = models.CharField(max_length=100, unique=True)
     typ = models.CharField(max_length=50)
     specjalizacja = models.CharField(max_length=100, blank=True)
-    dostepnosc = models.BooleanField(default=True)
-    status = models.CharField(max_length=100, default='Available')
+    status = models.CharField(
+        max_length=20,
+        choices=STATUS_CHOICES,
+        default='available'
+    )
+    assigned_to = models.ForeignKey(
+        Incydent,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='assigned_resources'
+    )
     lat = models.FloatField(default=51.1079)
     lng = models.FloatField(default=17.0385)
 
     class Meta:
         db_table = 'zasob'
+        indexes = [
+            models.Index(fields=['status'], name='management_zasob_status_idx'),
+        ]
 
     def __str__(self):
         return self.nazwa

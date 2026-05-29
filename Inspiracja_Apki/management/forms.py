@@ -5,10 +5,10 @@ from .models import Incydent, Zasob
 class IncydentForm(forms.ModelForm):
 
     PRIORITY_CHOICES_EN = [
-        ('niski', 'Low'),
-        ('średni', 'Medium'),
-        ('wysoki', 'High'),
-        ('krytyczny', 'Critical'),
+        ('low', 'Low'),
+        ('medium', 'Medium'),
+        ('high', 'High'),
+        ('critical', 'Critical'),
     ]
 
     priorytet = forms.ChoiceField(
@@ -58,6 +58,7 @@ class ZasobForm(forms.ModelForm):
 
     class Meta:
         model = Zasob
+        # Exclude status and assigned_to; those are managed by assignment logic
         fields = ['nazwa', 'typ', 'specjalizacja', 'lat', 'lng']
         labels = {
             'nazwa': 'Name',

@@ -13,7 +13,7 @@ CREATE TABLE Incydent (
     typ VARCHAR(50) NOT NULL,
     lat DECIMAL(9,6) NOT NULL, -- Szerokość geograficzna
     lng DECIMAL(9,6) NOT NULL, -- Długość geograficzna
-    priorytet VARCHAR(10) NOT NULL CHECK (priorytet IN ('niski', 'średni', 'wysoki', 'krytyczny')),
+    priorytet VARCHAR(10) NOT NULL CHECK (priorytet IN ('low', 'medium', 'high', 'critical')),
     status VARCHAR(20) NOT NULL,
     id_uzytkownika INTEGER REFERENCES Uzytkownik(id_uzytkownika)
 );
@@ -22,8 +22,8 @@ CREATE TABLE Incydent (
 CREATE TABLE Operacja (
     id_operacji SERIAL PRIMARY KEY,
     data_rozpoczecia TIMESTAMP DEFAULT CURRENT_TIMESTAMP CHECK (data_rozpoczecia <= CURRENT_TIMESTAMP), 
-    status VARCHAR(20) NOT NULL CHECK (status IN ('planowana', 'aktywna', 'zakończona')), 
-    id_incydentu INTEGER REFERENCES Incydent(id_incydentu) NOT NULL 
+    status VARCHAR(20) NOT NULL CHECK (status IN ('planned', 'active', 'completed')),
+    id_incydentu INTEGER REFERENCES Incydent(id_incydentu) NOT NULL
 );
 
 
