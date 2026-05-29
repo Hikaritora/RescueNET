@@ -44,8 +44,8 @@ class Command(BaseCommand):
 
         # Count existing by role
         existing_admins = User.objects.filter(is_superuser=True).count()
-        existing_dysp = User.objects.filter(rola='dyspozytor').count()
-        existing_rescuers = User.objects.filter(rola='ratownik').count()
+        existing_dysp = User.objects.filter(role='dispatcher').count()
+        existing_rescuers = User.objects.filter(role='rescuer').count()
 
         # Admins
         to_create_admins = max(0, target_admins - existing_admins)
@@ -57,7 +57,7 @@ class Command(BaseCommand):
                 user = User.objects.create_user(username=username, email=email, password=default_password)
                 user.is_staff = True
                 user.is_superuser = True
-                user.rola = 'admin'
+                    user.role = 'admin'
                 user.save()
                 created['admin'] += 1
                 start += 1
@@ -72,7 +72,7 @@ class Command(BaseCommand):
                 last = random.choice(LAST_NAMES)
                 email = f"{username}@example.com"
                 user = User.objects.create_user(username=username, email=email, password=default_password, first_name=first, last_name=last)
-                user.rola = 'dyspozytor'
+                user.role = 'dispatcher'
                 user.save()
                 created['dyspozytor'] += 1
                 start += 1
@@ -87,7 +87,7 @@ class Command(BaseCommand):
                 last = random.choice(LAST_NAMES)
                 email = f"{username}@example.com"
                 user = User.objects.create_user(username=username, email=email, password=default_password, first_name=first, last_name=last)
-                user.rola = 'ratownik'
+                user.role = 'rescuer'
                 user.save()
                 created['ratownik'] += 1
                 start += 1
@@ -138,7 +138,7 @@ class Command(BaseCommand):
         return created_total
 
     def create_incidents(self, incidents_count=500):
-        dyspozytors = list(User.objects.filter(rola='dyspozytor'))
+        dyspozytors = list(User.objects.filter(role='dispatcher'))
         if not dyspozytors:
             raise SystemExit("No 'dyspozytor' users found. Create some first.")
 

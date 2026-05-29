@@ -11,13 +11,14 @@ class IncydentForm(forms.ModelForm):
         ('critical', 'Critical'),
     ]
 
-    priorytet = forms.ChoiceField(
+    # Expose English-named form fields that override the model's widgets
+    priority = forms.ChoiceField(
         choices=PRIORITY_CHOICES_EN,
         label='Priority',
         widget=forms.Select(attrs={'class': 'form-control'})
     )
 
-    typ = forms.ChoiceField(
+    type = forms.ChoiceField(
         choices=Incydent.TYPE_CHOICES,
         label='Type',
         widget=forms.Select(attrs={'class': 'form-control'})
@@ -26,16 +27,16 @@ class IncydentForm(forms.ModelForm):
     class Meta:
         model = Incydent
         # Order fields logically for the UI: type, priority, notes, then coordinates
-        fields = ['typ', 'priorytet', 'notatki', 'lat', 'lng']
+        fields = ['type', 'priority', 'notes', 'latitude', 'longitude']
         labels = {
-            'lat': 'Latitude',
-            'lng': 'Longitude',
-            'notatki': 'Notes',
+            'latitude': 'Latitude',
+            'longitude': 'Longitude',
+            'notes': 'Notes',
         }
         widgets = {
-            'lat': forms.NumberInput(attrs={'class': 'form-control', 'step': '0.000001'}),
-            'lng': forms.NumberInput(attrs={'class': 'form-control', 'step': '0.000001'}),
-            'notatki': forms.Textarea(attrs={'class': 'form-control', 'rows': 3, 'placeholder': 'Additional notes or details about the incident...'}),
+            'latitude': forms.NumberInput(attrs={'class': 'form-control', 'step': '0.000001'}),
+            'longitude': forms.NumberInput(attrs={'class': 'form-control', 'step': '0.000001'}),
+            'notes': forms.Textarea(attrs={'class': 'form-control', 'rows': 3, 'placeholder': 'Additional notes or details about the incident...'}),
         }
 
 
@@ -50,7 +51,7 @@ class ZasobForm(forms.ModelForm):
         ('Other', 'Other'),
     ]
 
-    typ = forms.ChoiceField(
+    type = forms.ChoiceField(
         choices=TYPE_CHOICES,
         label='Type',
         widget=forms.Select(attrs={'class': 'form-control'})
@@ -59,16 +60,16 @@ class ZasobForm(forms.ModelForm):
     class Meta:
         model = Zasob
         # Exclude status and assigned_to; those are managed by assignment logic
-        fields = ['nazwa', 'typ', 'specjalizacja', 'lat', 'lng']
+        fields = ['name', 'type', 'specialization', 'latitude', 'longitude']
         labels = {
-            'nazwa': 'Name',
-            'specjalizacja': 'Specialization',
-            'lat': 'Latitude',
-            'lng': 'Longitude',
+            'name': 'Name',
+            'specialization': 'Specialization',
+            'latitude': 'Latitude',
+            'longitude': 'Longitude',
         }
         widgets = {
-            'nazwa': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'e.g. Ambulance A-12'}),
-            'specjalizacja': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'e.g. Life Support'}),
-            'lat': forms.NumberInput(attrs={'class': 'form-control', 'step': '0.000001'}),
-            'lng': forms.NumberInput(attrs={'class': 'form-control', 'step': '0.000001'}),
+            'name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'e.g. Ambulance A-12'}),
+            'specialization': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'e.g. Life Support'}),
+            'latitude': forms.NumberInput(attrs={'class': 'form-control', 'step': '0.000001'}),
+            'longitude': forms.NumberInput(attrs={'class': 'form-control', 'step': '0.000001'}),
         }

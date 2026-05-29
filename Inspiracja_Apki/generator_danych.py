@@ -45,8 +45,8 @@ def create_users(target_admins=3, target_dysp=50, target_rescuers=50, default_pa
 
     # Count existing by role
     existing_admins = User.objects.filter(is_superuser=True).count()
-    existing_dysp = User.objects.filter(rola='dyspozytor').count()
-    existing_rescuers = User.objects.filter(rola='ratownik').count()
+    existing_dysp = User.objects.filter(role='dispatcher').count()
+    existing_rescuers = User.objects.filter(role='rescuer').count()
 
     # Admins: create only missing number (but don't touch existing superusers if they're there)
     to_create_admins = max(0, target_admins - existing_admins)
@@ -58,7 +58,7 @@ def create_users(target_admins=3, target_dysp=50, target_rescuers=50, default_pa
             user = User.objects.create_user(username=username, email=email, password=default_password)
             user.is_staff = True
             user.is_superuser = True
-            user.rola = 'admin'
+            user.role = 'admin'
             user.save()
             created['admin'] += 1
             start += 1
@@ -73,7 +73,7 @@ def create_users(target_admins=3, target_dysp=50, target_rescuers=50, default_pa
             last = random.choice(LAST_NAMES)
             email = f"{username}@example.com"
             user = User.objects.create_user(username=username, email=email, password=default_password, first_name=first, last_name=last)
-            user.rola = 'dyspozytor'
+            user.role = 'dispatcher'
             user.save()
             created['dyspozytor'] += 1
             start += 1
@@ -88,7 +88,7 @@ def create_users(target_admins=3, target_dysp=50, target_rescuers=50, default_pa
             last = random.choice(LAST_NAMES)
             email = f"{username}@example.com"
             user = User.objects.create_user(username=username, email=email, password=default_password, first_name=first, last_name=last)
-            user.rola = 'ratownik'
+            user.role = 'rescuer'
             user.save()
             created['ratownik'] += 1
             start += 1
@@ -147,7 +147,7 @@ def create_resources(total_resources=50, prefix="WRO"):
 
 def create_incidents(incidents_count=500):
     # Reporter must be a dyspozytor
-    dyspozytors = list(User.objects.filter(rola='dyspozytor'))
+    dyspozytors = list(User.objects.filter(role='dispatcher'))
     if not dyspozytors:
         raise SystemExit("No 'dyspozytor' users found. Create some before generating incidents.")
 

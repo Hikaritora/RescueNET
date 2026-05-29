@@ -58,23 +58,23 @@
             {% for inc in incydenty %}
             <tr style="border-bottom: 1px solid #f9f9f9; font-size: 14px;">
                 <td style="padding: 15px; font-weight: bold;">INC-00{{ inc.id }}</td>
-                <td style="padding: 15px;">{{ inc.typ }}</td>
+                <td style="padding: 15px;">{{ inc.type }}</td>
                 <td style="padding: 15px; font-family: monospace; font-size: 12px; color: #666;">
-                    {{ inc.data_zgloszenia|date:"Y-m-d H:i" }}
+                    {{ inc.reported_at|date:"Y-m-d H:i" }}
                 </td>
-                <td style="padding: 15px;">
-                    {% if inc.priorytet == 'critical' %}
+                 <td style="padding: 15px;">
+                    {% if inc.priority == 'critical' %}
                         <span class="badge critical">Critical</span>
-                    {% elif inc.priorytet == 'high' %}
+                    {% elif inc.priority == 'high' %}
                         <span class="badge high">High</span>
-                    {% elif inc.priorytet == 'medium' %}
+                    {% elif inc.priority == 'medium' %}
                         <span class="badge medium">Medium</span>
-                    {% elif inc.priorytet == 'low' %}
+                    {% elif inc.priority == 'low' %}
                         <span class="badge low">Low</span>
                     {% else %}
-                        <span class="badge">{{ inc.priorytet|upper }}</span>
+                        <span class="badge">{{ inc.priority|upper }}</span>
                     {% endif %}
-                 </td>
+                  </td>
                  <td style="padding: 12px;">
                     <span class="status-chip {% if inc.status == 'reported' %}status-reported{% elif inc.status == 'in_progress' %}status-in-progress{% elif inc.status == 'closed' %}status-closed{% else %}status-reported{% endif %}">
                          {% if inc.status == 'reported' %}REPORTED
@@ -83,9 +83,9 @@
                          {% else %}{{ inc.status|upper }}{% endif %}
                     </span>
                  </td>
-                 <td style="padding: 15px; font-family: monospace; font-size: 12px; color: #666;">
-                    {{ inc.lat|floatformat:4 }}, {{ inc.lng|floatformat:4 }}
-                 </td>
+                  <td style="padding: 15px; font-family: monospace; font-size: 12px; color: #666;">
+                     {{ inc.latitude|floatformat:4 }}, {{ inc.longitude|floatformat:4 }}
+                  </td>
             </tr>
             {% endfor %}
         </tbody>

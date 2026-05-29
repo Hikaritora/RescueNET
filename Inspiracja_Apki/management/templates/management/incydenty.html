@@ -68,21 +68,21 @@
                         INC-00{{ incydent.id }}
                     </a>
                 </td>
-                <td style="padding: 15px;">{{ incydent.typ }}</td>
+                <td style="padding: 15px;">{{ incydent.type }}</td>
                 <td style="padding: 15px; font-family: monospace; color: #666; font-size: 13px;">
-                    {{ incydent.data_zgloszenia|date:"Y-m-d H:i" }}
+                    {{ incydent.reported_at|date:"Y-m-d H:i" }}
                 </td>
                 <td style="padding: 15px;">
-                    {% if incydent.priorytet == 'critical' %}
+                    {% if incydent.priority == 'critical' %}
                         <span class="badge critical">Critical</span>
-                    {% elif incydent.priorytet == 'high' %}
+                    {% elif incydent.priority == 'high' %}
                         <span class="badge high">High</span>
-                    {% elif incydent.priorytet == 'medium' %}
+                    {% elif incydent.priority == 'medium' %}
                         <span class="badge medium">Medium</span>
-                    {% elif incydent.priorytet == 'low' %}
+                    {% elif incydent.priority == 'low' %}
                         <span class="badge low">Low</span>
                     {% else %}
-                        <span class="badge">{{ incydent.priorytet }}</span>
+                        <span class="badge">{{ incydent.priority }}</span>
                     {% endif %}
                 </td>
                 <td style="padding: 15px;">

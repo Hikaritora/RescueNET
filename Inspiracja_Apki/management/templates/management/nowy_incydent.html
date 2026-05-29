@@ -10,7 +10,7 @@
 
         {# Render all fields except latitude/longitude in form order #}
         {% for field in form %}
-            {% if field.name != 'lat' and field.name != 'lng' %}
+            {% if field.name != 'latitude' and field.name != 'longitude' %}
             <div class="form-field">
                 <label for="{{ field.id_for_label }}">{{ field.label }}</label>
                 {{ field }}
@@ -24,17 +24,17 @@
         {# Render latitude and longitude side-by-side #}
         <div class="form-row">
             <div class="form-field">
-                <label for="{{ form.lat.id_for_label }}">{{ form.lat.label }}</label>
-                {{ form.lat }}
-                {% if form.lat.errors %}
-                <p class="form-field-error">{{ form.lat.errors|join:", " }}</p>
+                <label for="{{ form.latitude.id_for_label }}">{{ form.latitude.label }}</label>
+                {{ form.latitude }}
+                {% if form.latitude.errors %}
+                <p class="form-field-error">{{ form.latitude.errors|join:", " }}</p>
                 {% endif %}
             </div>
             <div class="form-field">
-                <label for="{{ form.lng.id_for_label }}">{{ form.lng.label }}</label>
-                {{ form.lng }}
-                {% if form.lng.errors %}
-                <p class="form-field-error">{{ form.lng.errors|join:", " }}</p>
+                <label for="{{ form.longitude.id_for_label }}">{{ form.longitude.label }}</label>
+                {{ form.longitude }}
+                {% if form.longitude.errors %}
+                <p class="form-field-error">{{ form.longitude.errors|join:", " }}</p>
                 {% endif %}
             </div>
         </div>
@@ -54,7 +54,7 @@
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        new MapPicker('map', 'id_lat', 'id_lng', {
+        new MapPicker('map', 'id_latitude', 'id_longitude', {
             defaultLat: 51.1079,
             defaultLng: 17.0385,
             zoom: 13,

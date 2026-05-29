@@ -4,7 +4,7 @@
 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
     <div>
         <h2 style="margin: 0;">Incident Details: INC-00{{ incydent.id }}</h2>
-        <p style="color: #666; margin: 5px 0 0 0;">Reported by: {{ incydent.zglaszajacy.username }}</p>
+        <p style="color: #666; margin: 5px 0 0 0;">Reported by: {{ incydent.reporter.username }}</p>
     </div>
     
     {% if incydent.status != 'closed' %}
@@ -37,10 +37,10 @@
 
             <div style="display: flex; flex-direction: column; gap: 12px;">
                 {% for zasob in zasoby %}
-                <div style="padding: 15px; border: 1px solid #eee; border-radius: 10px; border-left: 5px solid {% if 'Fire' in zasob.typ %}#d32f2f{% elif 'Police' in zasob.typ %}#2196f3{% elif 'Ambulance' in zasob.typ %}#fbc02d{% else %}#9e9e9e{% endif %}; background: #fafafa; display:flex; justify-content:space-between; align-items:center;">
+                <div style="padding: 15px; border: 1px solid #eee; border-radius: 10px; border-left: 5px solid {% if 'Fire' in zasob.type %}#d32f2f{% elif 'Police' in zasob.type %}#2196f3{% elif 'Ambulance' in zasob.type %}#fbc02d{% else %}#9e9e9e{% endif %}; background: #fafafa; display:flex; justify-content:space-between; align-items:center;">
     <div>
-        <strong style="display:block; color:#333;">{{ zasob.nazwa }}</strong>
-        <small style="color:#666; text-transform: uppercase;">{{ zasob.typ }}</small>
+        <strong style="display:block; color:#333;">{{ zasob.name }}</strong>
+        <small style="color:#666; text-transform: uppercase;">{{ zasob.type }}</small>
     </div>
      {% if incydent.status != 'closed' %}
      <form method="post" action="{% url 'usun_przypisanie_zasobu' incydent.id zasob.id %}" style="margin:0;">
@@ -72,7 +72,7 @@
     <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px;">
         <div>
             <label style="font-size: 11px; color: #aaa; text-transform: uppercase; font-weight: bold;">Incident Type</label>
-            <p style="margin: 5px 0; font-size: 18px;">{{ incydent.typ }}</p>
+            <p style="margin: 5px 0; font-size: 18px;">{{ incydent.type }}</p>
         </div>
         <div>
             <label style="font-size: 11px; color: #aaa; text-transform: uppercase; font-weight: bold;">Current Status</label>
@@ -85,38 +85,38 @@
                 </span>
             </p>
         </div>
-        <div>
-            <label style="font-size: 11px; color: #aaa; text-transform: uppercase; font-weight: bold;">Reported By</label>
-            <p style="margin: 5px 0; font-size: 18px;">{{ incydent.zglaszajacy.username }}</p>
-        </div>
+         <div>
+             <label style="font-size: 11px; color: #aaa; text-transform: uppercase; font-weight: bold;">Reported By</label>
+             <p style="margin: 5px 0; font-size: 18px;">{{ incydent.reporter.username }}</p>
+         </div>
         <div>
             <label style="font-size: 11px; color: #aaa; text-transform: uppercase; font-weight: bold;">Priority</label>
             <p style="margin: 5px 0;">
-                {% if incydent.priorytet == 'critical' %}
+                {% if incydent.priority == 'critical' %}
                     <span class="badge critical">Critical</span>
-                {% elif incydent.priorytet == 'high' %}
+                {% elif incydent.priority == 'high' %}
                     <span class="badge high">High</span>
-                {% elif incydent.priorytet == 'medium' %}
+                {% elif incydent.priority == 'medium' %}
                     <span class="badge medium">Medium</span>
-                {% elif incydent.priorytet == 'low' %}
+                {% elif incydent.priority == 'low' %}
                     <span class="badge low">Low</span>
                 {% else %}
-                    <span class="badge">{{ incydent.priorytet }}</span>
+                    <span class="badge">{{ incydent.priority }}</span>
                 {% endif %}
             </p>
         </div>
         <div>
             <label style="font-size: 11px; color: #aaa; text-transform: uppercase; font-weight: bold;">Date Reported</label>
-            <p style="margin: 5px 0; font-size: 16px; font-family: monospace;">{{ incydent.data_zgloszenia|date:"Y-m-d H:i" }}</p>
+            <p style="margin: 5px 0; font-size: 16px; font-family: monospace;">{{ incydent.reported_at|date:"Y-m-d H:i" }}</p>
         </div>
         <div>
             <label style="font-size: 11px; color: #aaa; text-transform: uppercase; font-weight: bold;">Location</label>
-            <p style="margin: 5px 0; font-family: monospace; font-size: 14px;">{{ incydent.lat }}, {{ incydent.lng }}</p>
+            <p style="margin: 5px 0; font-family: monospace; font-size: 14px;">{{ incydent.latitude }}, {{ incydent.longitude }}</p>
         </div>
-        {% if incydent.notatki %}
+        {% if incydent.notes %}
         <div style="grid-column: 1 / -1;">
             <label style="font-size: 11px; color: #aaa; text-transform: uppercase; font-weight: bold;">Notes</label>
-            <p style="margin: 5px 0; font-size: 15px; color: #444; background: #f9f9f9; padding: 12px; border-radius: 8px; border-left: 3px solid #ddd;">{{ incydent.notatki }}</p>
+            <p style="margin: 5px 0; font-size: 15px; color: #444; background: #f9f9f9; padding: 12px; border-radius: 8px; border-left: 3px solid #ddd;">{{ incydent.notes }}</p>
         </div>
         {% endif %}
     </div>
@@ -124,9 +124,9 @@
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        var rawLat = "{{ incydent.lat|default:'0' }}".replace(',', '.');
-        var rawLng = "{{ incydent.lng|default:'0' }}".replace(',', '.');
-        
+        var rawLat = "{{ incydent.latitude|default:'0' }}".replace(',', '.');
+        var rawLng = "{{ incydent.longitude|default:'0' }}".replace(',', '.');
+
         var incLat = parseFloat(rawLat);
         var incLng = parseFloat(rawLng);
         
@@ -192,11 +192,11 @@ function iconForType(typeRaw) {
         {% if incydent.status != 'closed' %}
             {% for z in wolne_zasoby %}
                 {
-                    let zName = "{{ z.nazwa|escapejs }}";
-                    let zType = "{{ z.typ|escapejs }}";
-                    let zLat = parseFloat("{{ z.lat|default:'0' }}".replace(',', '.'));
-                    let zLng = parseFloat("{{ z.lng|default:'0' }}".replace(',', '.'));
-                    
+                    let zName = "{{ z.name|escapejs }}";
+                    let zType = "{{ z.type|escapejs }}";
+                    let zLat = parseFloat("{{ z.latitude|default:'0' }}".replace(',', '.'));
+                    let zLng = parseFloat("{{ z.longitude|default:'0' }}".replace(',', '.'));
+
                     if (!isNaN(zLat) && zLat !== 0) {
                         let zMarker = L.marker([zLat, zLng], {
                             draggable: true,
