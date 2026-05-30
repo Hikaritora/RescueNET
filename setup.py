@@ -3,6 +3,18 @@
 Usage:
 	py setup.py
 
+Before running this script, install manually:
+  - Python 3.11+         https://www.python.org/downloads/
+      During install check "Add Python to PATH", then restart terminal.
+  - PostgreSQL 16/17/18  https://www.postgresql.org/download/windows/
+      Remember the password you set for user 'postgres'.
+
+The PostgreSQL service starts automatically after installation by default.
+
+After installation the app is available at:
+  http://127.0.0.1:8000/        main app
+  http://127.0.0.1:8000/admin/  admin panel (login: admin / admin)
+
 This script:
   1. creates/keeps a local virtual environment
   2. installs dependencies
@@ -87,9 +99,9 @@ def create_env_file(db_password: str, superuser_password: str) -> dict[str, str]
 		"DATABASE_HOST": input(f"  Database host [{DEFAULT_DB_HOST}]: ").strip() or DEFAULT_DB_HOST,
 		"DATABASE_PORT": input(f"  Database port [{DEFAULT_DB_PORT}]: ").strip() or DEFAULT_DB_PORT,
 		"DJANGO_SECRET_KEY": os.urandom(24).hex(),
-		"RESCUNET_SUPERUSER_NAME": DEFAULT_SUPERUSER_NAME,
-		"RESCUNET_SUPERUSER_EMAIL": DEFAULT_SUPERUSER_EMAIL,
-		"RESCUNET_SUPERUSER_PASSWORD": superuser_password,
+		"RESCUENET_SUPERUSER_NAME": DEFAULT_SUPERUSER_NAME,
+		"RESCUENET_SUPERUSER_EMAIL": DEFAULT_SUPERUSER_EMAIL,
+		"RESCUENET_SUPERUSER_PASSWORD": superuser_password,
 	}
 
 	with ENV_FILE.open("w", encoding="utf-8", newline="\n") as handle:
@@ -182,9 +194,9 @@ django.setup()
 from django.contrib.auth import get_user_model
 
 User = get_user_model()
-username = os.environ.get("RESCUNET_SUPERUSER_NAME", "admin")
-email = os.environ.get("RESCUNET_SUPERUSER_EMAIL", "admin@example.com")
-password = os.environ.get("RESCUNET_SUPERUSER_PASSWORD", "admin")
+username = os.environ.get("RESCUENET_SUPERUSER_NAME", "admin")
+email = os.environ.get("RESCUENET_SUPERUSER_EMAIL", "admin@example.com")
+password = os.environ.get("RESCUENET_SUPERUSER_PASSWORD", "admin")
 
 user = User.objects.filter(username=username).first()
 if user is None:
@@ -247,6 +259,8 @@ def main() -> None:
 	print("=" * 60)
 	print("  RescueNet automatic install")
 	print("=" * 60)
+	print("  Tip: Press enter when asked to input a value to use the default value written in the [parenthesis].")
+	print()
 
 	ensure_venv()
 	python = venv_python()
