@@ -6,13 +6,12 @@
 3. dodanie opcji sortowania do widoków inidents i resources
 4. usunąc z widoku resources linijkę stasus skoro jest w prawym górnym rogu panelu
 5. naprawić sortowanie resources po id bo po nazwie 20 jest przed 3 XD
+6. (ważne) poprawić, żeby ratownik nie mógł zamykać incydentów
 
 Do przemyślenia: 
-6. czy nie będzie najlepiej usunąć atrybutu name z resources i używac tylko id? 
 7. usunąć atrybut specjalizacja czy dodać go do danych
 
 OPCJONALNIE: 
 8. dodatkowe typu userów (policja, strażacy) i system przypisywania użytkowników do zdarzeń - wtedy inne widoki dla różnych userów
-
 
 
