@@ -1,4 +1,4 @@
-# Inspiracja_Apki/management/management/commands/seed_database.py
+# ZInspiracja_Apki/management/management/commands/seed_database.py
 
 import random
 from datetime import timedelta
