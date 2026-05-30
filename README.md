@@ -6,15 +6,14 @@
 ~~3. dodanie opcji sortowania do widoków inidents~~
 ~~4. usunąc z widoku resources linijkę stasus skoro jest w prawym górnym rogu panelu~~
 ~~5. naprawić sortowanie resources po id bo po nazwie 20 jest przed 3 XD~~
-6. (ważne) poprawić, żeby ratownik nie mógł zamykać incydentów
+~~6. (ważne) poprawić, żeby ratownik nie mógł zamykać incydentów~~
 7. usunąć z danych incydenty ze statusem in progess ale bez zasobów i zmienić seed_db żeby takich nie generował
+8. Poprawić menu wyboru typu zasobu na faktycznie istniejące albo dodać te pozostałe
+9. dodać opcje wyboru atrybutu specjalizacja, dodać go do danych i naprawic sortowanie po nim w widoku resources
 
-Do przemyślenia: 
-6. czy nie będzie najlepiej usunąć atrybutu name z resources i używac tylko id? 
-7. usunąć atrybut specjalizacja czy dodać go do danych
 
 OPCJONALNIE: 
 8. dodatkowe typu userów (policja, strażacy) i system przypisywania użytkowników do zdarzeń - wtedy inne widoki dla różnych userów
-
+dodać mapke do widoku zasobów
 
 

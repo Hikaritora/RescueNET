@@ -2,7 +2,9 @@ import csv
 from django.shortcuts import render, redirect, get_object_or_404
 from django.db.models import Count, Case, When, IntegerField
 from django.http import HttpResponse
-from django.contrib.auth.decorators import login_required, user_passes_test
+from django.contrib.auth.decorators import login_required
+from django.contrib import messages
+from django.shortcuts import resolve_url
 
 from .models import Incident, Resource
 from .forms import IncidentForm, ResourceForm
@@ -91,8 +93,11 @@ def list_incidents(request):
 
 
 @login_required
-@user_passes_test(is_dispatcher)
 def create_incident(request):
+    if not is_dispatcher(request.user):
+        messages.error(request, "You are not authorized to create incidents.")
+        return redirect('dashboard')
+
     if request.method == "POST":
         form = IncidentForm(request.POST)
         if form.is_valid():
@@ -144,6 +149,13 @@ def assign_resource(request, zasob_id):
     resource = get_object_or_404(Resource, id=zasob_id)
     incident_id = request.GET.get('incident_id')
 
+    # Role check
+    if not is_dispatcher(request.user):
+        messages.error(request, "You are not authorized to assign resources to incidents.")
+        if incident_id:
+            return redirect('incident_detail', pk=incident_id)
+        return redirect('incident_list')
+
     if incident_id:
         incident = get_object_or_404(Incident, id=incident_id)
 
@@ -167,6 +179,11 @@ def assign_resource(request, zasob_id):
 
 @login_required
 def unassign_resource(request, pk, zasob_id):
+    # Role check
+    if not is_dispatcher(request.user):
+        messages.error(request, "You are not authorized to unassign resources from incidents.")
+        return redirect('incident_detail', pk=pk)
+
     incident = get_object_or_404(Incident, pk=pk)
     resource = get_object_or_404(Resource, pk=zasob_id)
 
@@ -187,6 +204,10 @@ def unassign_resource(request, pk, zasob_id):
 
 @login_required
 def close_incident(request, pk):
+    if not is_dispatcher(request.user):
+        messages.error(request, "You are not authorized to close incidents.")
+        return redirect('incident_detail', pk=pk)
+
     incident = get_object_or_404(Incident, pk=pk)
     incident.status = 'closed'
     incident.save()

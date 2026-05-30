@@ -7,13 +7,18 @@
         <p style="color: #666; margin: 5px 0 0 0;">Reported by: {{ incident.reporter.username }}</p>
     </div>
 
-    {% if incident.status != 'closed' %}
+    {% if incident.status != 'closed' and user.role == 'dispatcher' or incident.status != 'closed' and user.is_superuser %}
     <form action="{% url 'close_incident' incident.id %}" method="post">
         {% csrf_token %}
         <button type="submit" style="background: #000; color: #fff; border: none; padding: 10px 20px; border-radius: 8px; font-weight: bold; cursor: pointer;">
             Finish Incident & Release Units
         </button>
     </form>
+
+    {% elif incident.status != 'closed' %}
+    <div style="background: #fff3e0; color: #f57f17; padding: 10px 20px; border-radius: 8px; font-weight: bold;">
+        You do not have permission to modify this incident.
+    </div>
     {% else %}
     <div style="background: #e8f5e9; color: #2e7d32; padding: 10px 20px; border-radius: 8px; font-weight: bold;">
         ✓ THIS CASE IS CLOSED
@@ -42,7 +47,7 @@
         <strong style="display:block; color:#333;">{{ resource.name }}</strong>
         <small style="color:#666; text-transform: uppercase;">{{ resource.type }}</small>
     </div>
-     {% if incident.status != 'closed' %}
+     {% if incident.status != 'closed' and user.role == 'dispatcher' or incident.status != 'closed' and user.is_superuser %}
      <form method="post" action="{% url 'unassign_resource' incident.id resource.id %}" style="margin:0;">
         {% csrf_token %}
         <button type="submit" title="Remove unit"
@@ -189,7 +194,7 @@ function iconForType(typeRaw) {
     return ICONS.DEFAULT;
 }
 
-        {% if incident.status != 'closed' %}
+        {% if incident.status != 'closed' and user.role == 'dispatcher' or incident.status != 'closed' and user.is_superuser %}
             {% for z in available_resources %}
                 {
                     let zName = "{{ z.name|escapejs }}";
