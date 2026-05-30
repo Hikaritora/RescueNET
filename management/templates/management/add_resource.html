@@ -52,6 +52,8 @@
     </form>
 </div>
 
+{{ specialization_choices_by_type|json_script:"specialization-choices-by-type" }}
+
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         new MapPicker('resource-map', 'id_latitude', 'id_longitude', {
@@ -61,6 +63,35 @@
             draggable: true,
             interactive: true
         });
+
+        const typeField = document.getElementById('id_type');
+        const specializationField = document.getElementById('id_specialization');
+        const specializationChoicesByType = JSON.parse(document.getElementById('specialization-choices-by-type').textContent);
+
+        function updateSpecializationOptions() {
+            const selectedType = typeField.value;
+            const currentValue = specializationField.value;
+            specializationField.innerHTML = '';
+
+            const options = specializationChoicesByType[selectedType] || [];
+            options.forEach(([value, label]) => {
+                const option = document.createElement('option');
+                option.value = value;
+                option.textContent = label;
+                specializationField.appendChild(option);
+            });
+
+            if (options.some(([value]) => value === currentValue)) {
+                specializationField.value = currentValue;
+            } else if (options.length > 0) {
+                specializationField.value = options[0][0];
+            }
+        }
+
+        if (typeField && specializationField) {
+            typeField.addEventListener('change', updateSpecializationOptions);
+            updateSpecializationOptions();
+        }
     });
 </script>
 

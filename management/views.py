@@ -126,16 +126,16 @@ def list_resources(request):
         resources = resources.filter(type=filter_type)
     if filter_status:
         resources = resources.filter(status=filter_status)
-    if filter_specialization:
+    if filter_type in Resource.SPECIALIZATION_CHOICES_BY_TYPE and filter_specialization:
         resources = resources.filter(specialization=filter_specialization)
 
-    # Get unique values for filter dropdowns
-    all_types = Resource.objects.values_list('type', flat=True).distinct()
+    # Get filter values from the fixed model choices so the menu stays in sync
+    all_types = Resource.TYPE_CHOICES
     all_statuses = Resource.STATUS_CHOICES  # Use model choices directly
-    all_specializations = Resource.objects.filter(specialization__gt='').values_list('specialization', flat=True).distinct()
-    # Always include "General" for empty/default specialization
-    all_specializations = set(all_specializations)
-    all_specializations.add('General')
+    if filter_type in Resource.SPECIALIZATION_CHOICES_BY_TYPE:
+        all_specializations = Resource.SPECIALIZATION_CHOICES_BY_TYPE[filter_type]
+    else:
+        all_specializations = []
 
     return render(request, 'management/resources.html', {
         'resources': resources,
@@ -382,4 +382,7 @@ def add_resource(request):
     else:
         form = ResourceForm()
 
-    return render(request, 'management/add_resource.html', {'form': form})
+    return render(request, 'management/add_resource.html', {
+        'form': form,
+        'specialization_choices_by_type': Resource.SPECIALIZATION_CHOICES_BY_TYPE,
+    })

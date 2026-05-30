@@ -101,7 +101,8 @@ class Command(BaseCommand):
         mapping = [
             ("AMB", "Ambulance"),
             ("FIR", "Fire Truck"),
-            ("POL", "Police Car"),
+            ("POL", "Police"),
+            ("TEC", "Technical"),
         ]
 
         existing_counts = {
@@ -124,11 +125,13 @@ class Command(BaseCommand):
             for i in range(existing + 1, existing + 1 + to_create):
                 # Make ~10% of new resources unavailable to simulate maintenance/out-of-service units.
                 status = 'unavailable' if random.random() < 0.10 else 'available'
+                specialization_choices = Resource.specialization_choices_for_type(resource_type)
+                specialization = random.choice([choice[0] for choice in specialization_choices]) if specialization_choices else ''
                 new_resources.append(
                     Resource(
                         name=f"{prefix}-{code}-{i}",
                         type=resource_type,
-                        specialization="",
+                        specialization=specialization,
                         status=status,
                         latitude=round(random.uniform(51.0400, 51.1800), 6),
                         longitude=round(random.uniform(16.8800, 17.1400), 6),

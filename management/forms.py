@@ -44,16 +44,21 @@ class ResourceForm(forms.ModelForm):
 
     TYPE_CHOICES = [
         ('Ambulance', 'Ambulance'),
+        ('Police', 'Police'),
         ('Fire Truck', 'Fire Truck'),
-        ('Police Car', 'Police Car'),
-        ('Rescue Unit', 'Rescue Unit'),
-        ('Medical Personnel', 'Medical Personnel'),
-        ('Other', 'Other'),
+        ('Technical', 'Technical'),
     ]
 
     type = forms.ChoiceField(
         choices=TYPE_CHOICES,
         label='Type',
+        widget=forms.Select(attrs={'class': 'form-control'})
+    )
+
+    specialization = forms.ChoiceField(
+        choices=[],
+        required=True,
+        label='Specialization',
         widget=forms.Select(attrs={'class': 'form-control'})
     )
 
@@ -63,13 +68,44 @@ class ResourceForm(forms.ModelForm):
         fields = ['name', 'type', 'specialization', 'latitude', 'longitude']
         labels = {
             'name': 'Name',
-            'specialization': 'Specialization',
             'latitude': 'Latitude',
             'longitude': 'Longitude',
         }
         widgets = {
             'name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'e.g. Ambulance A-12'}),
-            'specialization': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'e.g. Life Support'}),
             'latitude': forms.NumberInput(attrs={'class': 'form-control', 'step': '0.000001'}),
             'longitude': forms.NumberInput(attrs={'class': 'form-control', 'step': '0.000001'}),
         }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        resource_type = None
+        if self.data.get('type'):
+            resource_type = self.data.get('type')
+        elif self.instance and self.instance.pk:
+            resource_type = self.instance.type
+        else:
+            resource_type = Resource.TYPE_CHOICES[0][0]
+
+        allowed = Resource.specialization_choices_for_type(resource_type)
+        self.fields['specialization'].choices = allowed
+        if not self.is_bound and allowed:
+            self.fields['specialization'].initial = allowed[0][0]
+
+    def clean(self):
+        cleaned_data = super().clean()
+        resource_type = cleaned_data.get('type')
+        specialization = cleaned_data.get('specialization')
+
+        if resource_type:
+            if not specialization:
+                cleaned_data['specialization'] = Resource.default_specialization_for_type(resource_type)
+                specialization = cleaned_data['specialization']
+
+            allowed = {value for value, _ in Resource.specialization_choices_for_type(resource_type)}
+            if specialization and specialization not in allowed:
+                self.add_error('specialization', 'Select a valid specialization for this resource type.')
+
+        return cleaned_data
+

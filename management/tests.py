@@ -1,6 +1,7 @@
 from django.test import TestCase, Client
 from django.urls import reverse
 from django.contrib.auth import get_user_model
+from django.core.exceptions import ValidationError
 from management.models import Incident, Resource, User
 from management.forms import IncidentForm, ResourceForm
 
@@ -86,7 +87,7 @@ class ResourceModelTests(TestCase):
         self.resource = Resource.objects.create(
             name='Ambulance-1',
             type='Ambulance',
-            specialization='Life Support',
+            specialization='General',
             status='available',
             latitude=51.1079,
             longitude=17.0385
@@ -398,7 +399,7 @@ class PermissionMatrixTests(TestCase):
 
         response = self.client.post(reverse('add_resource'), data={
             'name': 'Water Rescue 1',
-            'type': 'Rescue Unit',
+            'type': 'Ambulance',
             'specialization': 'Water Rescue',
             'status': 'available',
             'latitude': '51.1079',
@@ -416,7 +417,7 @@ class PermissionMatrixTests(TestCase):
 
         response = self.client.post(reverse('add_resource'), data={
             'name': 'Unauthorized Resource',
-            'type': 'Rescue Unit',
+            'type': 'Ambulance',
             'specialization': 'Water Rescue',
             'status': 'available',
             'latitude': '51.1079',
@@ -504,11 +505,34 @@ class FormTests(TestCase):
         form = ResourceForm(data={
             'name': 'Ambulance-999',
             'type': 'Ambulance',
-            'specialization': '',
+            'specialization': 'General',
             'latitude': '51.1079',
             'longitude': '17.0385'
         })
         self.assertTrue(form.is_valid())
+
+    def test_resource_form_rejects_invalid_specialization_for_type(self):
+        form = ResourceForm(data={
+            'name': 'Police-999',
+            'type': 'Police',
+            'specialization': 'Air (Helicopter)',
+            'latitude': '51.1079',
+            'longitude': '17.0385'
+        })
+        self.assertFalse(form.is_valid())
+        self.assertIn('specialization', form.errors)
+
+    def test_resource_model_rejects_invalid_specialization_for_type(self):
+        resource = Resource(
+            name='Fire-Invalid',
+            type='Fire Truck',
+            specialization='Water Patrol',
+            status='available',
+            latitude=51.1079,
+            longitude=17.0385,
+        )
+        with self.assertRaises(ValidationError):
+            resource.full_clean()
 
 
 class AdminRegistrationTests(TestCase):

@@ -18,22 +18,22 @@
     <form method="GET" style="display: flex; gap: 15px; align-items: center; flex-wrap: wrap;">
         <select name="type" onchange="this.form.submit()" style="padding: 10px; border-radius: 6px; border: 1px solid #ddd; min-width: 200px;">
             <option value="">All Types</option>
-            {% for t in all_types %}
-            <option value="{{ t }}" {% if selected_type == t %}selected{% endif %}>{{ t }}</option>
-            {% endfor %}
-        </select>
-
-        <select name="status" onchange="this.form.submit()" style="padding: 10px; border-radius: 6px; border: 1px solid #ddd; min-width: 150px;">
-            <option value="">All Status</option>
-            {% for value, label in all_statuses %}
-            <option value="{{ value }}" {% if selected_status == value %}selected{% endif %}>{{ label }}</option>
+            {% for value, label in all_types %}
+            <option value="{{ value }}" {% if selected_type == value %}selected{% endif %}>{{ label }}</option>
             {% endfor %}
         </select>
 
         <select name="specialization" onchange="this.form.submit()" style="padding: 10px; border-radius: 6px; border: 1px solid #ddd; min-width: 200px;">
-            <option value="">All Specializations</option>
-            {% for s in all_specializations %}
-            <option value="{{ s }}" {% if selected_specialization == s %}selected{% endif %}>{{ s }}</option>
+            <option value="">{% if selected_type %}All Specializations{% else %}Select a type first{% endif %}</option>
+            {% for value, label in all_specializations %}
+            <option value="{{ value }}" {% if selected_specialization == value %}selected{% endif %}>{{ label }}</option>
+            {% endfor %}
+        </select>
+
+         <select name="status" onchange="this.form.submit()" style="padding: 10px; border-radius: 6px; border: 1px solid #ddd; min-width: 150px;">
+            <option value="">All Status</option>
+            {% for value, label in all_statuses %}
+            <option value="{{ value }}" {% if selected_status == value %}selected{% endif %}>{{ label }}</option>
             {% endfor %}
         </select>
 
@@ -67,7 +67,7 @@
           </div>
 
           <div style="margin-top: 15px; font-size: 14px; color: #555;">
-              <strong>Specialization:</strong> {{ resource.specialization|default:"General" }}<br>
+              <strong>Specialization:</strong> {{ resource.specialization }}<br>
               <strong>Location:</strong>
               <span style="font-family: monospace; font-size: 13px;">{{ resource.latitude|floatformat:4 }}, {{ resource.longitude|floatformat:4 }}</span>
           </div>
