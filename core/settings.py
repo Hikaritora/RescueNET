@@ -142,5 +142,5 @@ STATIC_URL = 'static/'
 LOGIN_URL = 'login'
 AUTH_USER_MODEL = 'management.User'
 # After renaming views/templates to English, update the default login redirect
-LOGIN_REDIRECT_URL = 'incident_list'
+LOGIN_REDIRECT_URL = 'dashboard'
 LOGOUT_REDIRECT_URL = 'login'
