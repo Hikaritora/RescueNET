@@ -11,10 +11,11 @@ from .forms import IncidentForm, ResourceForm
 
 
 def is_dispatcher(user):
-    return user.role == 'dispatcher' or user.is_superuser
+    return user.role == 'dispatcher' or user.role == 'admin' or user.is_superuser
 
 
 
+@login_required
 def list_incidents(request):
     filter_priority = request.GET.get('priority')
     filter_status = request.GET.get('status')
@@ -292,6 +293,7 @@ def export_report(request):
 @login_required
 def delete_resource(request, zasob_id):
     if request.user.role != 'admin' and not request.user.is_superuser:
+        messages.error(request, "You are not authorized to delete resources.")
         return redirect('resource_list')
 
     resource = get_object_or_404(Resource, id=zasob_id)
@@ -309,6 +311,7 @@ def mark_unavailable(request, zasob_id):
     This is idempotent and safe: if the resource is not available we simply redirect back.
     """
     if request.user.role != 'admin' and not request.user.is_superuser:
+        messages.error(request, "You are not authorized to change resource availability.")
         return redirect('resource_list')
 
     resource = get_object_or_404(Resource, id=zasob_id)
@@ -331,6 +334,7 @@ def mark_available(request, zasob_id):
     This reverses the unavailable state and is idempotent: if resource isn't unavailable we simply redirect back.
     """
     if request.user.role != 'admin' and not request.user.is_superuser:
+        messages.error(request, "You are not authorized to change resource availability.")
         return redirect('resource_list')
 
     resource = get_object_or_404(Resource, id=zasob_id)
@@ -350,6 +354,7 @@ def mark_available(request, zasob_id):
 def add_resource(request):
 
     if request.user.role != 'admin' and not request.user.is_superuser:
+        messages.error(request, "You are not authorized to add resources.")
         return redirect('dashboard')
 
     if request.method == 'POST':

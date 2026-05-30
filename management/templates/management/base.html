@@ -57,7 +57,7 @@
         Dashboard
     </a>
 
-    {% if user.role == 'dispatcher' or user.is_superuser %}
+    {% if user.role == 'dispatcher' or user.role == 'admin' or user.is_superuser %}
     <a href="{% url 'create_incident' %}" class="nav-item {% if request.resolver_match.url_name == 'create_incident' %}active{% endif %}" style="color: #ff5252; font-weight: bold;">
         + New Incident
     </a>
