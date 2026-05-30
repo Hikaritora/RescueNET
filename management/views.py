@@ -5,6 +5,7 @@ from django.http import HttpResponse
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.shortcuts import resolve_url
+from django.core.exceptions import ValidationError
 
 from .models import Incident, Resource
 from .forms import IncidentForm, ResourceForm
@@ -105,6 +106,7 @@ def create_incident(request):
             incident = form.save(commit=False)
             incident.reporter = request.user
             incident.status = 'reported'
+            incident.full_clean()
             incident.save()
             return redirect('incident_list')
     else:
@@ -170,7 +172,14 @@ def assign_resource(request, zasob_id):
 
         # Update incident status to in_progress
         incident.status = 'in_progress'
-        incident.save()
+        try:
+            incident.full_clean()
+            incident.save()
+        except ValidationError as e:
+            messages.error(request, f"Cannot update incident status: {e.message}")
+            resource.assigned_to = None
+            resource.status = 'available'
+            resource.save()
 
         return redirect('incident_detail', pk=incident_id)
 
@@ -198,7 +207,11 @@ def unassign_resource(request, pk, zasob_id):
     assigned_left = Resource.objects.filter(assigned_to=incident).exists()
     if not assigned_left and incident.status != 'closed':
         incident.status = 'reported'
-        incident.save()
+        try:
+            incident.full_clean()
+            incident.save()
+        except ValidationError as e:
+            messages.error(request, f"Error updating incident status: {e.message}")
 
     return redirect('incident_detail', pk=pk)
 
@@ -211,6 +224,7 @@ def close_incident(request, pk):
 
     incident = get_object_or_404(Incident, pk=pk)
     incident.status = 'closed'
+    incident.full_clean()
     incident.save()
 
     # Release all resources assigned to this incident

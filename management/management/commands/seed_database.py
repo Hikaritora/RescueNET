@@ -155,7 +155,9 @@ class Command(BaseCommand):
                     latitude=round(random.uniform(lat_min, lat_max), 6),
                     longitude=round(random.uniform(lng_min, lng_max), 6),
                     priority=random.choice([choice[0] for choice in Incident.PRIORITY_CHOICES]),
-                    status=random.choice(["reported", "in_progress", "closed"]),
+                    # Do not create 'in_progress' incidents without assigned resources here.
+                    # For seeding keep incidents in stable states only (reported or closed).
+                    status=random.choice(["reported", "closed"]),
                     reporter=random.choice(dispatchers),
                     reported_at=timezone.now() - timedelta(days=random.randint(0, 30)),
                     notes="",

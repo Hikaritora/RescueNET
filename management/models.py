@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
+from django.core.exceptions import ValidationError
 
 class User(AbstractUser):
     ROLE_CHOICES = [
@@ -53,6 +54,15 @@ class Incident(models.Model):
 
     def __str__(self):
         return f"Incident #{self.id} - {self.type}"
+
+    def clean(self):
+        """Validate that in_progress incidents have assigned resources."""
+        if self.status == 'in_progress':
+            # Check if this incident has any assigned resources
+            if not self.assigned_resources.exists():
+                raise ValidationError(
+                    "An incident cannot be set to 'in_progress' without assigned resources."
+                )
 
 
 class Resource(models.Model):
