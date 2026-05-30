@@ -6,7 +6,8 @@
 ~~3. dodanie opcji sortowania do widoków inidents~~ i resources
 4. usunąc z widoku resources linijkę stasus skoro jest w prawym górnym rogu panelu
 5. naprawić sortowanie resources po id bo po nazwie 20 jest przed 3 XD
-6. naprawić to ze moge incydent zakonczyc i zreleasowac unity jako ratownik
+6. (ważne) poprawić, żeby ratownik nie mógł zamykać incydentów
+7. usunąć z danych incydenty ze statusem in progess ale bez zasobów i zmienić seed_db żeby takich nie generował
 
 Do przemyślenia: 
 6. czy nie będzie najlepiej usunąć atrybutu name z resources i używac tylko id? 
