@@ -28,7 +28,7 @@ from management.views import archive
 from management.views import export_report
 from management.views import add_resource
 from management.views import unassign_resource
-from management.views import delete_resource
+from management.views import delete_resource, mark_unavailable, mark_available
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -45,6 +45,8 @@ urlpatterns = [
     path('archive/export/', export_report, name='export_csv'),
     path('resource/add/', add_resource, name='add_resource'),
     path('resource/delete/<int:zasob_id>/', delete_resource, name='delete_resource'),
+    path('resource/unavailable/<int:zasob_id>/', mark_unavailable, name='mark_unavailable'),
+    path('resource/available/<int:zasob_id>/', mark_available, name='mark_available'),
     path('incidents/<int:pk>/unassign-resource/<int:zasob_id>/', unassign_resource, name='unassign_resource'),
 ]
 

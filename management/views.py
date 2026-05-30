@@ -112,7 +112,7 @@ def list_resources(request):
     filter_status = request.GET.get('status')
     filter_specialization = request.GET.get('specialization')
 
-    resources = Resource.objects.all().order_by('type', 'name')
+    resources = Resource.objects.all().order_by('type', 'id')
 
     if filter_type:
         resources = resources.filter(type=filter_type)
@@ -277,6 +277,50 @@ def delete_resource(request, zasob_id):
 
     if request.method == 'POST':
         resource.delete()
+
+    return redirect('resource_list')
+
+
+@login_required
+def mark_unavailable(request, zasob_id):
+    """Mark a resource as unavailable (admin only). Only allowed when resource is currently available.
+
+    This is idempotent and safe: if the resource is not available we simply redirect back.
+    """
+    if request.user.role != 'admin' and not request.user.is_superuser:
+        return redirect('resource_list')
+
+    resource = get_object_or_404(Resource, id=zasob_id)
+
+    if request.method == 'POST':
+        # Only allow toggling when resource is currently available
+        if resource.status == 'available':
+            resource.status = 'unavailable'
+            # ensure it's not assigned
+            resource.assigned_to = None
+            resource.save()
+
+    return redirect('resource_list')
+
+
+@login_required
+def mark_available(request, zasob_id):
+    """Mark a resource as available (admin only). Only allowed when resource is currently unavailable.
+
+    This reverses the unavailable state and is idempotent: if resource isn't unavailable we simply redirect back.
+    """
+    if request.user.role != 'admin' and not request.user.is_superuser:
+        return redirect('resource_list')
+
+    resource = get_object_or_404(Resource, id=zasob_id)
+
+    if request.method == 'POST':
+        # Only allow toggling when resource is currently unavailable
+        if resource.status == 'unavailable':
+            resource.status = 'available'
+            # cleared assigned_to should already be None, but ensure consistency
+            resource.assigned_to = None
+            resource.save()
 
     return redirect('resource_list')
 
