@@ -28,19 +28,27 @@
     <table style="width: 100%; border-collapse: collapse; margin-top: 15px;">
         <thead>
             <tr style="text-align: left; color: #999; font-size: 12px; text-transform: uppercase; border-bottom: 1px solid #eee;">
-                <th style="padding: 10px;">ID</th>
-                <th style="padding: 10px;">Type</th>
-                <th style="padding: 10px;">Priority</th>
-                <th style="padding: 10px;">Status</th>
-                <th style="padding: 10px;">Action</th>
+                <th style="padding: 15px;">ID</th>
+                <th style="padding: 15px;">Type</th>
+                <th style="padding: 15px;">Date Reported</th>
+                <th style="padding: 15px;">Priority</th>
+                <th style="padding: 15px;">Status</th>
+                <th style="padding: 15px;">Location</th>
             </tr>
         </thead>
         <tbody>
             {% for incident in recent_incidents %}
             <tr style="border-bottom: 1px solid #f9f9f9;">
-                <td style="padding: 12px; font-weight: bold;">INC-00{{ incident.id }}</td>
-                <td style="padding: 12px;">{{ incident.type }}</td>
-                <td style="padding: 12px;">
+                <td style="padding: 15px; font-weight: bold;">
+                    <a href="{% url 'incident_detail' incident.id %}" style="color: #d32f2f; text-decoration: none;">
+                        INC-00{{ incident.id }}
+                    </a>
+                </td>
+                <td style="padding: 15px;">{{ incident.type }}</td>
+                <td style="padding: 15px; font-family: monospace; color: #666; font-size: 13px;">
+                    {{ incident.reported_at|date:"Y-m-d H:i" }}
+                </td>
+                <td style="padding: 15px;">
                     {% if incident.priority == 'critical' %}
                         <span class="badge critical">Critical</span>
                     {% elif incident.priority == 'high' %}
@@ -53,7 +61,7 @@
                         <span class="badge">{{ incident.priority }}</span>
                     {% endif %}
                 </td>
-                <td style="padding: 12px;">
+                <td style="padding: 15px;">
                     <span class="status-chip {% if incident.status == 'reported' %}status-reported{% elif incident.status == 'in_progress' %}status-in-progress{% elif incident.status == 'closed' %}status-closed{% else %}status-reported{% endif %}">
                         {% if incident.status == 'reported' %}REPORTED
                         {% elif incident.status == 'in_progress' %}IN PROGRESS
@@ -61,8 +69,8 @@
                         {% else %}{{ incident.status|upper }}{% endif %}
                     </span>
                 </td>
-                <td style="padding: 12px;">
-                    <a href="{% url 'incident_detail' incident.id %}" style="color: #d32f2f; text-decoration: none; font-size: 13px; font-weight: bold;">View Details →</a>
+                <td style="padding: 15px; font-family: monospace; font-size: 12px; color: #666;">
+                    {{ incident.latitude|floatformat:4 }}, {{ incident.longitude|floatformat:4 }}
                 </td>
             </tr>
             {% endfor %}

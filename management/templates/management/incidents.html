@@ -30,19 +30,19 @@
             <option value="Other" {% if selected_type == 'Other' %}selected{% endif %}>Other</option>
         </select>
 
-        <select name="status" onchange="this.form.submit()" style="padding: 10px; border-radius: 6px; border: 1px solid #ddd; min-width: 150px;">
-            <option value="">All Statuses</option>
-            <option value="reported" {% if selected_status == 'reported' %}selected{% endif %}>Reported</option>
-            <option value="in_progress" {% if selected_status == 'in_progress' %}selected{% endif %}>In Progress</option>
-            <option value="closed" {% if selected_status == 'closed' %}selected{% endif %}>Closed</option>
-        </select>
-
         <select name="priority" onchange="this.form.submit()" style="padding: 10px; border-radius: 6px; border: 1px solid #ddd; min-width: 150px;">
             <option value="">All Priorities</option>
             <option value="critical" {% if selected_priority == 'critical' %}selected{% endif %}>Critical</option>
             <option value="high" {% if selected_priority == 'high' %}selected{% endif %}>High</option>
             <option value="medium" {% if selected_priority == 'medium' %}selected{% endif %}>Medium</option>
             <option value="low" {% if selected_priority == 'low' %}selected{% endif %}>Low</option>
+        </select>
+
+        <select name="status" onchange="this.form.submit()" style="padding: 10px; border-radius: 6px; border: 1px solid #ddd; min-width: 150px;">
+            <option value="">All Statuses</option>
+            <option value="reported" {% if selected_status == 'reported' %}selected{% endif %}>Reported</option>
+            <option value="in_progress" {% if selected_status == 'in_progress' %}selected{% endif %}>In Progress</option>
+            <option value="closed" {% if selected_status == 'closed' %}selected{% endif %}>Closed</option>
         </select>
 
         <a href="{% url 'incident_list' %}" style="color: #666; text-decoration: none; font-size: 14px;">Reset Filters</a>
@@ -53,11 +53,36 @@
     <table style="width: 100%; border-collapse: collapse;">
         <thead>
             <tr style="background: #f8f9fa; border-bottom: 2px solid #eee;">
-                <th style="padding: 15px; text-align: left;">Incident ID</th>
-                <th style="padding: 15px; text-align: left;">Type</th>
-                <th style="padding: 15px; text-align: left;">Date Reported</th>
-                <th style="padding: 15px; text-align: left;">Priority</th>
-                <th style="padding: 15px; text-align: left;">Status</th>
+                <th style="padding: 15px; text-align: left;">
+                    <a href="?{{ base_qs }}sort=id&dir={% if current_sort == 'id' and current_dir == 'asc' %}desc{% else %}asc{% endif %}" style="color: inherit; text-decoration: none;">
+                        Incident ID {% if current_sort == 'id' %}{% if current_dir == 'asc' %}↑{% else %}↓{% endif %}{% endif %}
+                    </a>
+                </th>
+                <th style="padding: 15px; text-align: left;">
+                    <a href="?{{ base_qs }}sort=type&dir={% if current_sort == 'type' and current_dir == 'asc' %}desc{% else %}asc{% endif %}" style="color: inherit; text-decoration: none;">
+                        Type {% if current_sort == 'type' %}{% if current_dir == 'asc' %}↑{% else %}↓{% endif %}{% endif %}
+                    </a>
+                </th>
+                <th style="padding: 15px; text-align: left;">
+                    <a href="?{{ base_qs }}sort=reported_at&dir={% if current_sort == 'reported_at' and current_dir == 'asc' %}desc{% else %}asc{% endif %}" style="color: inherit; text-decoration: none;">
+                        Date Reported {% if current_sort == 'reported_at' %}{% if current_dir == 'asc' %}↑{% else %}↓{% endif %}{% endif %}
+                    </a>
+                </th>
+                <th style="padding: 15px; text-align: left;">
+                    <a href="?{{ base_qs }}sort=priority&dir={% if current_sort == 'priority' and current_dir == 'asc' %}desc{% else %}asc{% endif %}" style="color: inherit; text-decoration: none;">
+                        Priority {% if current_sort == 'priority' %}{% if current_dir == 'asc' %}↑{% else %}↓{% endif %}{% endif %}
+                    </a>
+                </th>
+                <th style="padding: 15px; text-align: left;">
+                    <a href="?{{ base_qs }}sort=status&dir={% if current_sort == 'status' and current_dir == 'asc' %}desc{% else %}asc{% endif %}" style="color: inherit; text-decoration: none;">
+                        Status {% if current_sort == 'status' %}{% if current_dir == 'asc' %}↑{% else %}↓{% endif %}{% endif %}
+                    </a>
+                </th>
+                <th style="padding: 15px; text-align: left;">
+                    <a href="?{{ base_qs }}sort=latitude&dir={% if current_sort == 'latitude' and current_dir == 'asc' %}desc{% else %}asc{% endif %}" style="color: inherit; text-decoration: none;">
+                        Location {% if current_sort == 'latitude' %}{% if current_dir == 'asc' %}↑{% else %}↓{% endif %}{% endif %}
+                    </a>
+                </th>
             </tr>
         </thead>
         <tbody>
@@ -92,11 +117,14 @@
                         {% elif incident.status == 'closed' %}CLOSED
                         {% else %}{{ incident.status|upper }}{% endif %}
                     </span>
-                 </td>
+                </td>
+                <td style="padding: 15px; font-family: monospace; font-size: 12px; color: #666;">
+                    {{ incident.latitude|floatformat:4 }}, {{ incident.longitude|floatformat:4 }}
+                </td>
             </tr>
             {% empty %}
             <tr>
-                <td colspan="5" style="padding: 30px; text-align: center; color: #999;">No incidents found matching these filters.</td>
+                <td colspan="6" style="padding: 30px; text-align: center; color: #999;">No incidents found matching these filters.</td>
             </tr>
             {% endfor %}
         </tbody>

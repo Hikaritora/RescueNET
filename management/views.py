@@ -1,6 +1,6 @@
 import csv
 from django.shortcuts import render, redirect, get_object_or_404
-from django.db.models import Count
+from django.db.models import Count, Case, When, IntegerField
 from django.http import HttpResponse
 from django.contrib.auth.decorators import login_required, user_passes_test
 
@@ -18,8 +18,8 @@ def list_incidents(request):
     filter_status = request.GET.get('status')
     filter_type = request.GET.get('type')
 
-    incidents = Incident.objects.all().order_by('-id')
-
+    # Apply filters first
+    incidents = Incident.objects.all()
     if filter_priority:
         incidents = incidents.filter(priority=filter_priority)
     if filter_status:
@@ -27,11 +27,66 @@ def list_incidents(request):
     if filter_type:
         incidents = incidents.filter(type=filter_type)
 
+    # Sorting: allow only a safe whitelist of sortable fields
+    allowed_sorts = {
+        'id': 'id',
+        'type': 'type',
+        'reported_at': 'reported_at',
+        'priority': 'priority',
+        'status': 'status',
+        'latitude': 'latitude',
+        'longitude': 'longitude',
+    }
+    current_sort = request.GET.get('sort', 'reported_at')
+    current_dir = request.GET.get('dir', 'desc')
+    if current_sort not in allowed_sorts:
+        current_sort = 'reported_at'
+    if current_dir not in ('asc', 'desc'):
+        current_dir = 'desc'
+
+    order_prefix = '' if current_dir == 'asc' else '-'
+    # Special-case priority ordering with a custom fixed order
+    if current_sort == 'priority':
+        priority_order = Case(
+            When(priority='low', then=1),
+            When(priority='medium', then=2),
+            When(priority='high', then=3),
+            When(priority='critical', then=4),
+            default=0,
+            output_field=IntegerField()
+        )
+        incidents = incidents.annotate(priority_order=priority_order)
+        # Use annotated field for ordering
+        if current_dir == 'asc':
+            incidents = incidents.order_by('priority_order')
+        else:
+            incidents = incidents.order_by('-priority_order')
+    # Support multi-column ordering for location (latitude then longitude)
+    elif current_sort == 'latitude':
+        incidents = incidents.order_by(f"{order_prefix}latitude", f"{order_prefix}longitude")
+    else:
+        order_field = order_prefix + allowed_sorts[current_sort]
+        incidents = incidents.order_by(order_field)
+    # Build a small base querystring for preserving filters in header links
+    base_qs_parts = []
+    if filter_type:
+        base_qs_parts.append(f"type={filter_type}")
+    if filter_status:
+        base_qs_parts.append(f"status={filter_status}")
+    if filter_priority:
+        base_qs_parts.append(f"priority={filter_priority}")
+    base_qs = "&".join(base_qs_parts)
+    if base_qs:
+        base_qs += '&'
+
     return render(request, 'management/incidents.html', {
         'incidents': incidents,
         'selected_priority': filter_priority,
         'selected_status': filter_status,
         'selected_type': filter_type,
+        'current_sort': current_sort,
+        'current_dir': current_dir,
+        'base_qs': base_qs,
     })
 
 
@@ -164,7 +219,7 @@ def dashboard(request):
     total_incidents = Incident.objects.count()
     active_incidents = Incident.objects.exclude(status='closed').count()
     available_resources = Resource.objects.filter(status='available').count()
-    recent_incidents = Incident.objects.all().order_by('-id')[:5]
+    recent_incidents = Incident.objects.exclude(status='closed').order_by('-reported_at')[:10]
 
     return render(request, 'management/dashboard.html', {
         'total': total_incidents,
@@ -187,7 +242,7 @@ def archive(request):
     in_use = Resource.objects.exclude(status='available').count()
     available = Resource.objects.filter(status='available').count()
 
-    archived_incidents = Incident.objects.all().order_by('-id')
+    archived_incidents = Incident.objects.filter(status='closed').order_by('-reported_at')
 
     return render(request, 'management/archive.html', {
         'total': total,
