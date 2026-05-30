@@ -1,0 +1,123 @@
+{% extends 'management/base.html' %}
+
+{% block content %}
+<div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 20px;">
+    <div>
+        <h2 style="margin: 0;">Reports & Archive</h2>
+        <p style="color: #666; margin: 5px 0 0 0;">Analytics and historical data</p>
+    </div>
+    <a href="{% url 'export_csv' %}" style="background: #000; color: #fff; text-decoration: none; padding: 10px 20px; border-radius: 8px; font-weight: bold; font-size: 13px;">
+        📥 Download CSV
+    </a>
+</div>
+
+<div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-bottom: 25px;">
+    <div style="background: #fff; padding: 20px; border-radius: 12px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+        <small style="color: #999; font-weight: bold;">Total Incidents</small>
+        <h2 style="margin: 10px 0;">{{ total }}</h2>
+    </div>
+    <div style="background: #fff; padding: 20px; border-radius: 12px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+        <small style="color: #999; font-weight: bold;">Active Now</small>
+        <h2 style="margin: 10px 0; color: #d32f2f;">{{ active }}</h2>
+    </div>
+    <div style="background: #fff; padding: 20px; border-radius: 12px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+        <small style="color: #999; font-weight: bold;">Resolved</small>
+        <h2 style="margin: 10px 0; color: #388e3c;">{{ resolved }}</h2>
+    </div>
+</div>
+
+<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 25px;">
+    <div style="background: #fff; padding: 20px; border-radius: 12px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+        <h4 style="margin-top: 0;">Incidents by Type</h4>
+        <div style="position: relative; height: 280px;">
+            <canvas id="typePieChart"></canvas>
+        </div>
+    </div>
+    <div style="background: #fff; padding: 20px; border-radius: 12px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+        <h4 style="margin-top: 0;">Resource Status</h4>
+        <div style="position: relative; height: 280px;">
+            <canvas id="resourceBarChart"></canvas>
+        </div>
+    </div>
+</div>
+
+<div style="background: #fff; border-radius: 12px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); overflow: hidden;">
+    <h4 style="padding: 20px; margin: 0; background: #fafafa; border-bottom: 1px solid #eee;">Incident Archive</h4>
+    <table style="width: 100%; border-collapse: collapse;">
+        <thead>
+            <tr style="text-align: left; font-size: 12px; color: #999; border-bottom: 1px solid #eee;">
+                <th style="padding: 15px;">ID</th>
+                <th style="padding: 15px;">Type</th>
+                <th style="padding: 15px;">Date Reported</th>
+                <th style="padding: 15px;">Priority</th>
+                <th style="padding: 15px;">Status</th>
+                <th style="padding: 15px;">Location</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for incident in incidents %}
+            <tr style="border-bottom: 1px solid #f9f9f9; font-size: 14px;">
+                <td style="padding: 15px; font-weight: bold;">INC-00{{ incident.id }}</td>
+                <td style="padding: 15px;">{{ incident.type }}</td>
+                <td style="padding: 15px; font-family: monospace; font-size: 12px; color: #666;">
+                    {{ incident.reported_at|date:"Y-m-d H:i" }}
+                </td>
+                 <td style="padding: 15px;">
+                    {% if incident.priority == 'critical' %}
+                        <span class="badge critical">Critical</span>
+                    {% elif incident.priority == 'high' %}
+                        <span class="badge high">High</span>
+                    {% elif incident.priority == 'medium' %}
+                        <span class="badge medium">Medium</span>
+                    {% elif incident.priority == 'low' %}
+                        <span class="badge low">Low</span>
+                    {% else %}
+                        <span class="badge">{{ incident.priority|upper }}</span>
+                    {% endif %}
+                  </td>
+                 <td style="padding: 12px;">
+                    <span class="status-chip {% if incident.status == 'reported' %}status-reported{% elif incident.status == 'in_progress' %}status-in-progress{% elif incident.status == 'closed' %}status-closed{% else %}status-reported{% endif %}">
+                         {% if incident.status == 'reported' %}REPORTED
+                         {% elif incident.status == 'in_progress' %}IN PROGRESS
+                         {% elif incident.status == 'closed' %}CLOSED
+                         {% else %}{{ incident.status|upper }}{% endif %}
+                    </span>
+                 </td>
+                  <td style="padding: 15px; font-family: monospace; font-size: 12px; color: #666;">
+                     {{ incident.latitude|floatformat:4 }}, {{ incident.longitude|floatformat:4 }}
+                  </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    new Chart(document.getElementById('typePieChart'), {
+        type: 'pie',
+        data: {
+            labels: {{ type_labels|safe }},
+            datasets: [{
+                data: {{ type_counts|safe }},
+                backgroundColor: ['#ff5252', '#ffab40', '#448aff', '#69f0ae']
+            }]
+        },
+        options: { maintainAspectRatio: false }
+    });
+
+    new Chart(document.getElementById('resourceBarChart'), {
+        type: 'bar',
+        data: {
+            labels: ['In Use', 'Available'],
+            datasets: [{
+                label: 'Count',
+                data: {{ resource_stats|safe }},
+                backgroundColor: ['#448aff', '#69f0ae']
+            }]
+        },
+        options: { maintainAspectRatio: false }
+    });
+</script>
+{% endblock %}
+

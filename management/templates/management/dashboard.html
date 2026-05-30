@@ -1,0 +1,72 @@
+{% extends 'management/base.html' %}
+
+{% block content %}
+<h2>RescueNet Dashboard</h2>
+<p>System overview and recent activity.</p>
+
+<div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-bottom: 30px;">
+    <div style="background: #fff; padding: 25px; border-radius: 15px; border-top: 5px solid #d32f2f; box-shadow: 0 4px 6px rgba(0,0,0,0.05);">
+        <small style="color: #999; font-weight: bold; text-transform: uppercase;">Total Incidents</small>
+        <h1 style="margin: 10px 0; font-size: 36px;">{{ total }}</h1>
+    </div>
+    <div style="background: #fff; padding: 25px; border-radius: 15px; border-top: 5px solid #fbc02d; box-shadow: 0 4px 6px rgba(0,0,0,0.05);">
+        <small style="color: #999; font-weight: bold; text-transform: uppercase;">Active Operations</small>
+        <h1 style="margin: 10px 0; font-size: 36px; color: #d32f2f;">{{ active }}</h1>
+    </div>
+    <div style="background: #fff; padding: 25px; border-radius: 15px; border-top: 5px solid #388e3c; box-shadow: 0 4px 6px rgba(0,0,0,0.05);">
+        <small style="color: #999; font-weight: bold; text-transform: uppercase;">Available Units</small>
+        <h1 style="margin: 10px 0; font-size: 36px; color: #388e3c;">{{ resources }}</h1>
+    </div>
+</div>
+
+
+
+
+
+<div style="background: #fff; padding: 25px; border-radius: 15px; box-shadow: 0 4px 6px rgba(0,0,0,0.05);">
+    <h3 style="margin-top: 0;">Recent Incidents</h3>
+    <table style="width: 100%; border-collapse: collapse; margin-top: 15px;">
+        <thead>
+            <tr style="text-align: left; color: #999; font-size: 12px; text-transform: uppercase; border-bottom: 1px solid #eee;">
+                <th style="padding: 10px;">ID</th>
+                <th style="padding: 10px;">Type</th>
+                <th style="padding: 10px;">Priority</th>
+                <th style="padding: 10px;">Status</th>
+                <th style="padding: 10px;">Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for incident in recent_incidents %}
+            <tr style="border-bottom: 1px solid #f9f9f9;">
+                <td style="padding: 12px; font-weight: bold;">INC-00{{ incident.id }}</td>
+                <td style="padding: 12px;">{{ incident.type }}</td>
+                <td style="padding: 12px;">
+                    {% if incident.priority == 'critical' %}
+                        <span class="badge critical">Critical</span>
+                    {% elif incident.priority == 'high' %}
+                        <span class="badge high">High</span>
+                    {% elif incident.priority == 'medium' %}
+                        <span class="badge medium">Medium</span>
+                    {% elif incident.priority == 'low' %}
+                        <span class="badge low">Low</span>
+                    {% else %}
+                        <span class="badge">{{ incident.priority }}</span>
+                    {% endif %}
+                </td>
+                <td style="padding: 12px;">
+                    <span class="status-chip {% if incident.status == 'reported' %}status-reported{% elif incident.status == 'in_progress' %}status-in-progress{% elif incident.status == 'closed' %}status-closed{% else %}status-reported{% endif %}">
+                        {% if incident.status == 'reported' %}REPORTED
+                        {% elif incident.status == 'in_progress' %}IN PROGRESS
+                        {% elif incident.status == 'closed' %}CLOSED
+                        {% else %}{{ incident.status|upper }}{% endif %}
+                    </span>
+                </td>
+                <td style="padding: 12px;">
+                    <a href="{% url 'incident_detail' incident.id %}" style="color: #d32f2f; text-decoration: none; font-size: 13px; font-weight: bold;">View Details →</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

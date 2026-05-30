@@ -1,2 +1,0 @@
-Baza już działa, należy pobrać server Postgresql oraz odaplić pgAadmin4
-W query tool najpierw uruchomić plik schemat_lepszy.sql następnie data.sql(przykładowe dane_

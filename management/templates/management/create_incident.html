@@ -1,0 +1,67 @@
+{% extends 'management/base.html' %}
+
+{% block content %}
+<h2>Report New Incident</h2>
+<p>Fill in the details to dispatch rescue units. <strong>Click on the map to set the exact location.</strong></p>
+
+<div class="form-wrapper">
+    <form method="POST">
+        {% csrf_token %}
+
+        {# Render all fields except latitude/longitude in form order #}
+        {% for field in form %}
+            {% if field.name != 'latitude' and field.name != 'longitude' %}
+            <div class="form-field">
+                <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                {{ field }}
+                {% if field.errors %}
+                <p class="form-field-error">{{ field.errors|join:", " }}</p>
+                {% endif %}
+            </div>
+            {% endif %}
+        {% endfor %}
+
+        {# Render latitude and longitude side-by-side #}
+        <div class="form-row">
+            <div class="form-field">
+                <label for="{{ form.latitude.id_for_label }}">{{ form.latitude.label }}</label>
+                {{ form.latitude }}
+                {% if form.latitude.errors %}
+                <p class="form-field-error">{{ form.latitude.errors|join:", " }}</p>
+                {% endif %}
+            </div>
+            <div class="form-field">
+                <label for="{{ form.longitude.id_for_label }}">{{ form.longitude.label }}</label>
+                {{ form.longitude }}
+                {% if form.longitude.errors %}
+                <p class="form-field-error">{{ form.longitude.errors|join:", " }}</p>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="map-header">
+            <label class="map-header-label">Incident Location (Interactive Map)</label>
+            <p class="map-header-desc">Click the map to place a marker, then drag it if needed. Latitude/Longitude fields above update automatically.</p>
+            <div id="map" class="map-container large"></div>
+        </div>
+
+        <div class="form-actions">
+            <button type="submit" class="primary">Confirm and Report</button>
+            <a href="{% url 'incident_list' %}">Cancel</a>
+        </div>
+    </form>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        new MapPicker('map', 'id_latitude', 'id_longitude', {
+            defaultLat: 51.1079,
+            defaultLng: 17.0385,
+            zoom: 13,
+            draggable: true,
+            interactive: true
+        });
+    });
+</script>
+{% endblock %}
+
