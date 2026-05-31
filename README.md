@@ -4,6 +4,9 @@ A comprehensive **incident management and emergency response system** built with
 
 ![RescueNet](https://img.shields.io/badge/Django-6.0-green) ![Python](https://img.shields.io/badge/Python-3.11%2B-blue) ![PostgreSQL](https://img.shields.io/badge/PostgreSQL-16%2B-blue)
 
+<img width="1919" height="1079" alt="image" src="https://github.com/user-attachments/assets/6e6effa5-4dc7-4078-8c9b-64a18c3c515b" />
+
+
 ## 🌟 Features
 
 - **Incident Management**: Create, assign, track, and close emergency incidents
