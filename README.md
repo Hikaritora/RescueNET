@@ -30,7 +30,7 @@ See [ROLE_PERMISSIONS.md](ROLE_PERMISSIONS.md) for detailed permissions.
 - **Backend**: Django 6.0.4
 - **Database**: PostgreSQL 16+ (with psycopg2)
 - **Frontend**: HTML5, CSS3, JavaScript (Vanilla + Chart.js, Leaflet)
-- **Maps**: Leaflet 1.9.4
+- **Maps**: Leaflet 1.9.4, Carto, markers by [@pointhi](https://github.com/pointhi)
 - **Charting**: Chart.js (for analytics dashboards)
 - **Server**: ASGI (Uvicorn compatible with daphne)
 
