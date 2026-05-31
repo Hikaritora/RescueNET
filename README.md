@@ -11,10 +11,10 @@
 ~~8. Poprawić menu wyboru typu zasobu na tylko te faktycznie istniejące (POL, FIR, AMB) albo dodać te pozostałe (tu też zmienić baze danych żeby zamiast dowolnego tesktu przyjmowała tylko te konkretne opcje)~~
 ~~9. dodać opcje wyboru atrybutu specjalizacja (też kilka opcji w bazie danych, nie dowolny tekst) przy tworzeniu zasobu, dodać ten atrybut do istniejących danych i naprawic sortowanie po nim w widoku resources~~
 10. Zmienić kolory w wykresie żeby był każdy inny, dodać wykresy:  Incidents status, Resource type
-
+11. Dodać podpisy specjalizacji na mapce w dymku po kliknięciu na zasób
 
 OPCJONALNIE: 
 1. dodatkowe typu userów (policja, strażacy) i system przypisywania użytkowników do zdarzeń - wtedy inne widoki dla różnych userów
-2. dodać mapke do widoku zasobów
+2. Może dodać mapke do widoku zasobów???
 
 
