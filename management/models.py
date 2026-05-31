@@ -81,6 +81,8 @@ class Resource(models.Model):
             ('Pursuit', 'Pursuit'),
             ('Transport', 'Transport'),
             ('Horse Patrol', 'Horse Patrol'),
+            ('Incognito', 'Incognito'),
+            ('Detetive', 'Detetive'),
         ],
         'Ambulance': [
             ('General', 'General'),

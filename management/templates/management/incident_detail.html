@@ -217,6 +217,7 @@ function iconForType(typeRaw) {
                 {
                     let zName = "{{ z.name|escapejs }}";
                     let zType = "{{ z.type|escapejs }}";
+                    let zSpec = "{{ z.specialization|escapejs }}";
                     let zLat = parseFloat("{{ z.latitude|default:'0' }}".replace(',', '.'));
                     let zLng = parseFloat("{{ z.longitude|default:'0' }}".replace(',', '.'));
 
@@ -229,7 +230,12 @@ function iconForType(typeRaw) {
                             icon: iconForType(zType)
                         }).addTo(map);
 
-                        zMarker.bindPopup("<b>" + zName + "</b><br>Drag me to assign!");
+                        zMarker.bindPopup(
+                            "<b>" + zName + "</b><br>" +
+                            "<b>Type:</b> " + zType + "<br>" +
+                            "<b>Spec:</b> " + zSpec + "<br>" +
+                            "<b>Drag me to assign!</b>"
+                        );
 
                         zMarker.on('dragend', function(event) {
                             let marker = event.target;
