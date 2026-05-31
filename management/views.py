@@ -275,8 +275,20 @@ def archive(request):
     type_labels = [item['type'] for item in type_data]
     type_counts = [item['count'] for item in type_data]
 
-    in_use = Resource.objects.exclude(status='available').count()
-    available = Resource.objects.filter(status='available').count()
+    # Resource status counts (use the model's STATUS_CHOICES order so labels stay in sync)
+    resource_status_keys = [s[0] for s in Resource.STATUS_CHOICES]
+    resource_status_labels = [s[1] for s in Resource.STATUS_CHOICES]
+    resource_status_counts = [Resource.objects.filter(status=key).count() for key in resource_status_keys]
+
+    # Resource types counts
+    resource_type_keys = [t[0] for t in Resource.TYPE_CHOICES]
+    resource_type_labels = [t[1] for t in Resource.TYPE_CHOICES]
+    resource_type_counts = [Resource.objects.filter(type=key).count() for key in resource_type_keys]
+
+    # Incident status counts (explicit order)
+    incident_status_keys = ['reported', 'in_progress', 'closed']
+    incident_status_labels = ['Reported', 'In Progress', 'Closed']
+    incident_status_counts = [Incident.objects.filter(status=s).count() for s in incident_status_keys]
 
     archived_incidents = Incident.objects.filter(status='closed').order_by('-reported_at')
 
@@ -286,7 +298,12 @@ def archive(request):
         'resolved': resolved,
         'type_labels': type_labels,
         'type_counts': type_counts,
-        'resource_stats': [in_use, available],
+        'resource_status_labels': resource_status_labels,
+        'resource_status_counts': resource_status_counts,
+        'resource_type_labels': resource_type_labels,
+        'resource_type_counts': resource_type_counts,
+        'incident_status_labels': incident_status_labels,
+        'incident_status_counts': incident_status_counts,
         'incidents': archived_incidents
     })
 

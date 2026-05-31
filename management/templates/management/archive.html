@@ -26,17 +26,32 @@
     </div>
 </div>
 
-<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 25px;">
+<div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; margin-bottom: 25px;">
     <div style="background: #fff; padding: 20px; border-radius: 12px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
-        <h4 style="margin-top: 0;">Incidents by Type</h4>
-        <div style="position: relative; height: 280px;">
+        <h4 style="margin-top: 0;">Incident Types</h4>
+        <div style="position: relative; height: 240px;">
             <canvas id="typePieChart"></canvas>
         </div>
     </div>
+
     <div style="background: #fff; padding: 20px; border-radius: 12px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
-        <h4 style="margin-top: 0;">Resource Status</h4>
-        <div style="position: relative; height: 280px;">
-            <canvas id="resourceBarChart"></canvas>
+        <h4 style="margin-top: 0;">Incidents Status</h4>
+        <div style="position: relative; height: 240px;">
+            <canvas id="incidentStatusChart"></canvas>
+        </div>
+    </div>
+
+    <div style="background: #fff; padding: 20px; border-radius: 12px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+        <h4 style="margin-top: 0;">Resource Types</h4>
+        <div style="position: relative; height: 240px;">
+            <canvas id="resourceTypeChart"></canvas>
+        </div>
+    </div>
+
+    <div style="background: #fff; padding: 20px; border-radius: 12px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+        <h4 style="margin-top: 0;">Resources Status</h4>
+        <div style="position: relative; height: 240px;">
+            <canvas id="resourceStatusChart"></canvas>
         </div>
     </div>
 </div>
@@ -98,30 +113,102 @@
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
-    new Chart(document.getElementById('typePieChart'), {
-        type: 'pie',
-        data: {
-            labels: {{ type_labels|safe }},
-            datasets: [{
-                data: {{ type_counts|safe }},
-                backgroundColor: ['#ff5252', '#ffab40', '#448aff', '#69f0ae']
-            }]
-        },
-        options: { maintainAspectRatio: false }
-    });
+    // Helper to generate N visually distinct colors using HSL
+    function generateDistinctColors(n) {
+        if (!n || n <= 0) return [];
+        const colors = [];
+        const saturation = 80; // percent
+        const lightness = 55; // percent
+        for (let i = 0; i < n; i++) {
+            const hue = Math.round((i * (360 / n)) % 360);
+            // build HSL string without JS template literals to avoid interfering with Django template parsing
+            colors.push('hsl(' + hue + ' ' + saturation + '% ' + lightness + '%)');
+        }
+        return colors;
+    }
 
-    new Chart(document.getElementById('resourceBarChart'), {
-        type: 'bar',
-        data: {
-            labels: ['In Use', 'Available'],
-            datasets: [{
-                label: 'Count',
-                data: {{ resource_stats|safe }},
-                backgroundColor: ['#448aff', '#69f0ae']
-            }]
-        },
-        options: { maintainAspectRatio: false }
-    });
+    (function() {
+        // Incidents by Type
+        const typeLabels = {{ type_labels|safe }} || [];
+        const typeCounts = {{ type_counts|safe }} || [];
+        const typeColors = generateDistinctColors(typeLabels.length);
+
+        new Chart(document.getElementById('typePieChart'), {
+            type: 'pie',
+            data: {
+                labels: typeLabels,
+                datasets: [{ data: typeCounts, backgroundColor: typeColors, borderWidth: 1 }]
+            },
+            options: { maintainAspectRatio: false, plugins: { legend: { position: 'right', labels: { boxWidth: 14 } } } }
+        });
+
+        // Status color mapping (use same colors as .status-chip / resource-availability classes)
+        function incidentStatusColor(label) {
+            const l = (label || '').toLowerCase();
+            if (l.includes('reported')) return '#c62828'; // red
+            if (l.includes('in progress') || l.includes('in_progress') || l.includes('in')) return '#f57f17'; // orange
+            if (l.includes('closed')) return '#2e7d32'; // green
+            return '#90a4ae';
+        }
+
+        // Incidents Status (bar chart using status colors)
+        const incidentStatusLabels = {{ incident_status_labels|safe }} || [];
+        const incidentStatusCounts = {{ incident_status_counts|safe }} || [];
+        const incidentStatusColors = incidentStatusLabels.map(incidentStatusColor);
+
+        new Chart(document.getElementById('incidentStatusChart'), {
+            type: 'bar',
+            data: {
+                labels: incidentStatusLabels,
+                datasets: [{ label: 'Count', data: incidentStatusCounts, backgroundColor: incidentStatusColors }]
+            },
+            options: { maintainAspectRatio: false, plugins: { legend: { display: false } } }
+        });
+
+        // Resources Types (pie) - use same palette as Resources / Incident Detail (fire/police/ambulance/technical)
+        const resourceTypeLabels = {{ resource_type_labels|safe }} || [];
+        const resourceTypeCounts = {{ resource_type_counts|safe }} || [];
+        function resourceTypeColor(label) {
+            const l = (label || '').toLowerCase();
+            if (l.includes('fire')) return '#d32f2f';
+            if (l.includes('police')) return '#2196f3';
+            if (l.includes('ambulance')) return '#fbc02d';
+            return '#9e9e9e';
+        }
+        const resourceTypeColors = resourceTypeLabels.map(resourceTypeColor);
+
+        new Chart(document.getElementById('resourceTypeChart'), {
+            type: 'pie',
+            data: {
+                labels: resourceTypeLabels,
+                datasets: [{ data: resourceTypeCounts, backgroundColor: resourceTypeColors }]
+            },
+            options: { maintainAspectRatio: false, plugins: { legend: { position: 'right', labels: { boxWidth: 14 } } } }
+        });
+
+        // Resources Status (bar chart using resource availability colors)
+        function resourceStatusColor(label) {
+            const l = (label || '').toLowerCase();
+            // check 'unavailable' before 'available' because 'unavailable' contains 'available'
+            if (l.includes('unavailable')) return '#c62828'; // red
+            if (l === 'assigned' || l.includes('assigned')) return '#f57f17'; // orange
+            if (l === 'available' || l.includes('available')) return '#2e7d32'; // green
+            return '#90a4ae';
+        }
+
+        const resourceStatusLabels = {{ resource_status_labels|safe }} || [];
+        const resourceStatusCounts = {{ resource_status_counts|safe }} || [];
+        const resourceStatusColors = resourceStatusLabels.map(resourceStatusColor);
+
+        new Chart(document.getElementById('resourceStatusChart'), {
+            type: 'bar',
+            data: {
+                labels: resourceStatusLabels,
+                datasets: [{ label: 'Count', data: resourceStatusCounts, backgroundColor: resourceStatusColors }]
+            },
+            options: { maintainAspectRatio: false, plugins: { legend: { display: false } } }
+        });
+    })();
 </script>
 {% endblock %}
 
