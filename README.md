@@ -186,6 +186,7 @@ RescueNet/
 ├── requirements.txt              # Python dependencies
 ├── README.md                     # This file
 ├── ROLE_PERMISSIONS.md          # Detailed role documentation
+├── LICENSE                      # License
 └── .env                         # Environment configuration (created during setup)
 ```
 
@@ -303,7 +304,9 @@ pip install -r requirements.txt --upgrade
 
 ## 📄 License
 
-This project is part of a university course on database management. All rights reserved.
+This project is licensed under the MIT License — see the [LICENSE](https://github.com/Hikaritora/RescueNET/blob/main/LICENSE) file for details.
+
+This is a university course project. We are not affiliated with or related to any other projects or companies named "RescueNet".
 
 ---
 
