@@ -257,15 +257,15 @@ Visit: http://127.0.0.1:8000/admin/
 The `.env` file (created during installation) contains:
 
 ```ini
-DATABASE_NAME          # PostgreSQL database name
-DATABASE_USER          # PostgreSQL user
-DATABASE_PASSWORD      # PostgreSQL user password
-DATABASE_HOST          # PostgreSQL host (default: localhost)
-DATABASE_PORT          # PostgreSQL port (default: 5432)
-DJANGO_SECRET_KEY      # Django secret key (auto-generated)
-RESCUENET_SUPERUSER_NAME       # Default admin username
-RESCUENET_SUPERUSER_EMAIL      # Default admin email
-RESCUENET_SUPERUSER_PASSWORD   # Default admin password
+DATABASE_NAME                   # PostgreSQL database name
+DATABASE_USER                   # PostgreSQL user
+DATABASE_PASSWORD               # PostgreSQL user password
+DATABASE_HOST                   # PostgreSQL host (default: localhost)
+DATABASE_PORT                   # PostgreSQL port (default: 5432)
+DJANGO_SECRET_KEY               # Django secret key (auto-generated)
+RESCUENET_SUPERUSER_NAME        # Default admin username
+RESCUENET_SUPERUSER_EMAIL       # Default admin email
+RESCUENET_SUPERUSER_PASSWORD    # Default admin password
 ```
 
 ## 🐛 Troubleshooting
