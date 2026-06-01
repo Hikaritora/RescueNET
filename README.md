@@ -161,33 +161,33 @@ python manage.py runserver
 ```
 RescueNet/
 ├── core/                          # Django project settings
-│   ├── settings.py               # Main Django configuration
-│   ├── urls.py                   # URL routing
-│   ├── wsgi.py                   # WSGI application
-│   └── asgi.py                   # ASGI application
+│   ├── settings.py                # Main Django configuration
+│   ├── urls.py                    # URL routing
+│   ├── wsgi.py                    # WSGI application
+│   └── asgi.py                    # ASGI application
 │
 ├── management/                    # Main Django app
-│   ├── migrations/               # Database migrations
+│   ├── migrations/                # Database migrations
 │   ├── static/
-│   │   ├── css/                 # Static stylesheets
-│   │   └── js/                  # Static JavaScript (map-picker)
+│   │   ├── css/                   # Static stylesheets
+│   │   └── js/                    # Static JavaScript (map-picker)
 │   ├── templates/
-│   │   └── management/          # HTML templates
-│   ├── models.py                # Database models (User, Incident, Resource)
-│   ├── views.py                 # View logic
-│   ├── forms.py                 # Django forms
-│   ├── admin.py                 # Django admin configuration
+│   │   └── management/            # HTML templates
+│   ├── models.py                  # Database models (User, Incident, Resource)
+│   ├── views.py                   # View logic
+│   ├── forms.py                   # Django forms
+│   ├── admin.py                   # Django admin configuration
 │   └── management/
 │       └── commands/
-│           └── seed_database.py  # Demo data seeding command
+│           └── seed_database.py   # Demo data seeding command
 │
-├── setup.py                      # Automated installation script
-├── manage.py                     # Django management CLI
-├── requirements.txt              # Python dependencies
-├── README.md                     # This file
-├── ROLE_PERMISSIONS.md          # Detailed role documentation
-├── LICENSE                      # License
-└── .env                         # Environment configuration (created during setup)
+├── setup.py                       # Automated installation script
+├── manage.py                      # Django management CLI
+├── requirements.txt               # Python dependencies
+├── README.md                      # This file
+├── ROLE_PERMISSIONS.md            # Detailed role documentation
+├── LICENSE                        # License
+└── .env                           # Environment configuration (created during setup)
 ```
 
 ## 🗂️ Key Models
