@@ -39,7 +39,14 @@ _load_local_env_file(BASE_DIR / ".env")
 # See https://docs.djangoproject.com/en/6.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.getenv('DJANGO_SECRET_KEY', 'django-insecure-7@r@(n7q_9y)fkbybd*!@)h%jeai$c!kn=)=avr7siip*#6otr')
+_secret_key = os.getenv('DJANGO_SECRET_KEY')
+if not _secret_key:
+    raise ValueError(
+        "DJANGO_SECRET_KEY is not set. "
+        "Add it to your .env file. "
+        "You can generate one with: python -c \"import secrets; print(secrets.token_hex(32))\""
+    )
+SECRET_KEY = _secret_key
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -97,7 +104,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': os.getenv('DATABASE_NAME', 'rescuenet'),
         'USER': os.getenv('DATABASE_USER', 'postgres'),
-        'PASSWORD': os.getenv('DATABASE_PASSWORD', 'haslo'),
+        'PASSWORD': os.getenv('DATABASE_PASSWORD', ''),
         'HOST': os.getenv('DATABASE_HOST', 'localhost'),
         'PORT': os.getenv('DATABASE_PORT', '5432'),
     }
